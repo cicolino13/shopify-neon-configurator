@@ -5,6 +5,8 @@ model: sonnet
 tools: Write, Read, Edit, Bash, Grep, Glob
 ---
 
+**Name: Quentin Qt**
+
 # PyQt5 Developer Agent
 
 ## Role

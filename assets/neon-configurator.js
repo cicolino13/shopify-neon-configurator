@@ -1,1 +1,1 @@
-document.addEventListener('DOMContentLoaded',()=>{console.log('Neon configurator loaded');});
+document.addEventListener('DOMContentLoaded',()=>{console.log('Neonlight configurator stage ready');});

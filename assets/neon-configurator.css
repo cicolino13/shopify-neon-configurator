@@ -1,1 +1,36 @@
-.nlc-stage{min-height:400px;background:#111;color:#0f0;display:flex;align-items:center;justify-content:center;}
+.nlc-stage{
+  --nlc-bg:#120912;
+  --nlc-bg-raised:#1c0f1a;
+  --nlc-ink:#f6f2f7;
+  --nlc-ink-soft:#b9aec2;
+  --nlc-accent:#ff3fa4;
+  --nlc-accent-glow:rgba(255,63,164,.55);
+  min-height:400px;
+  background:radial-gradient(ellipse at 50% 40%, var(--nlc-bg-raised), var(--nlc-bg));
+  color:var(--nlc-ink);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:1.25rem;
+  text-align:center;
+  padding:3rem 1.5rem;
+  font-family:'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+.nlc-logo{display:flex;align-items:center;gap:0.75rem;color:var(--nlc-accent);}
+.nlc-icon{width:44px;height:44px;filter:drop-shadow(0 0 8px var(--nlc-accent-glow));}
+.nlc-wordmark{
+  font-family:'Unbounded', sans-serif;
+  font-weight:800;
+  font-size:1.6rem;
+  letter-spacing:-0.02em;
+  color:var(--nlc-accent);
+  text-shadow:0 0 8px var(--nlc-accent-glow), 0 0 24px rgba(255,63,164,.3);
+}
+.nlc-status{
+  font-family:'IBM Plex Mono', ui-monospace, monospace;
+  font-size:0.75rem;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--nlc-ink-soft);
+}

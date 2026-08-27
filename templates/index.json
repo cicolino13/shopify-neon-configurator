@@ -27,6 +27,7 @@
         "button"
       ],
       "settings": {
+        "image": "shopify://shop_images/colorful-neon-signs-illuminate-a-workshop-space-2025-01-11-01-26-49-utc.jpg",
         "image_overlay_opacity": 40,
         "image_height": "large",
         "desktop_content_position": "middle-center",
@@ -102,6 +103,7 @@
         "zuhause": {
           "type": "column",
           "settings": {
+            "image": "shopify://shop_images/flamingo_1.jpg",
             "title": "Für Zuhause",
             "text": "<p>Neon-Deko für Wohnräume, Zimmer und besondere Anlässe.</p>",
             "link_label": "Zur Kollektion",
@@ -111,6 +113,7 @@
         "business": {
           "type": "column",
           "settings": {
+            "image": "shopify://shop_images/Barber_shop.jpg",
             "title": "Für Ihr Geschäft",
             "text": "<p>Ladenbeschriftung und Leuchtwerbung für Gastronomie und Retail.</p>",
             "link_label": "Angebot anfragen",
@@ -120,6 +123,7 @@
         "configurator": {
           "type": "column",
           "settings": {
+            "image": "shopify://shop_images/Neon_grid_1.jpg",
             "title": "Jetzt konfigurieren",
             "text": "<p>Text, Farbe und Grösse selbst wählen und Angebot anfordern.</p>",
             "link_label": "Zum Konfigurator",
@@ -252,6 +256,7 @@
       },
       "block_order": ["heading", "text", "button"],
       "settings": {
+        "image": "shopify://shop_images/open.jpg",
         "height": "medium",
         "desktop_image_width": "medium",
         "layout": "image_first",
@@ -294,6 +299,7 @@
       },
       "block_order": ["heading", "text", "button"],
       "settings": {
+        "image": "shopify://shop_images/coffeeshop.jpg",
         "height": "medium",
         "desktop_image_width": "medium",
         "layout": "text_first",

@@ -1,30 +1,41 @@
 {% schema %}
 {
   "name": "Neon configurator",
-  "settings": [
-    {
-      "type": "text",
-      "id": "email",
-      "label": "Angebots-E-Mail",
-      "info": "Leer lassen, um die Shop-E-Mail-Adresse zu verwenden."
-    }
-  ],
+  "settings": [],
   "presets": [{ "name": "Neon" }]
 }
 {% endschema %}
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=Pacifico&family=Baloo+2:wght@600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=Pacifico&family=Baloo+2:wght@600;700&family=Monoton&family=Bungee&family=IBM+Plex+Mono:wght@500&display=swap">
 {{ 'neon-configurator.css' | asset_url | stylesheet_tag }}
 
 <div class="nlc-wrap" id="konfigurator">
   <div class="nlc-intro">
     <span class="nlc-eyebrow">Live-Vorschau</span>
     <h2 class="nlc-heading">Gestalte dein Neon-Sign</h2>
-    <p class="nlc-sub">Text eingeben, Stil, Farbe und Grösse wählen. Wir melden uns innerhalb von 24&nbsp;Stunden mit einem unverbindlichen Angebot.</p>
+    <p class="nlc-sub">Text, Stil, Farbe, Größe, Montage und Hintergrund wählen &ndash; wir melden uns innerhalb von 24&nbsp;Stunden mit einem unverbindlichen Angebot.</p>
   </div>
 
   <div class="nlc-tool">
-    <div class="nlc-stage">
-      <span class="nlc-preview" id="nlcPreview" style="--nlc-color:#3fd7e0; --nlc-scale:1; font-family:'Syne', sans-serif;">NEONLIGHT</span>
+    <div class="nlc-stage-col">
+      <div class="nlc-stage" id="nlcStage">
+        <div class="nlc-board">
+          <span class="nlc-preview" id="nlcPreview" style="--nlc-color:#3fd7e0; --nlc-scale:1; font-family:'Syne', sans-serif;">NEONLIGHT</span>
+        </div>
+      </div>
+      <div class="nlc-scenes" role="radiogroup" aria-label="Hintergrund wählen" id="nlcScenes">
+        <button type="button" class="nlc-scene is-active" data-bg="" data-name="Dunkel" role="radio" aria-checked="true">
+          <span class="nlc-scene-swatch nlc-scene-dark"></span>Dunkel
+        </button>
+        <button type="button" class="nlc-scene" data-bg="https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-29298710.jpg" data-name="Wohnzimmer" role="radio" aria-checked="false">
+          <span class="nlc-scene-swatch" style="background-image:url('https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-29298710.jpg?width=200');"></span>Wohnzimmer
+        </button>
+        <button type="button" class="nlc-scene" data-bg="https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-6447392.jpg" data-name="Ladengeschäft" role="radio" aria-checked="false">
+          <span class="nlc-scene-swatch" style="background-image:url('https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-6447392.jpg?width=200');"></span>Laden
+        </button>
+        <button type="button" class="nlc-scene" data-bg="https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-5490972.jpg" data-name="Bar &amp; Restaurant" role="radio" aria-checked="false">
+          <span class="nlc-scene-swatch" style="background-image:url('https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-5490972.jpg?width=200');"></span>Bar
+        </button>
+      </div>
     </div>
 
     <div class="nlc-controls">
@@ -39,6 +50,8 @@
           <button type="button" class="nlc-style is-active" data-font="'Syne', sans-serif" data-name="Modern" role="radio" aria-checked="true" style="font-family:'Syne', sans-serif;">Modern</button>
           <button type="button" class="nlc-style" data-font="'Pacifico', cursive" data-name="Skript" role="radio" aria-checked="false" style="font-family:'Pacifico', cursive;">Skript</button>
           <button type="button" class="nlc-style" data-font="'Baloo 2', sans-serif" data-name="Rund" role="radio" aria-checked="false" style="font-family:'Baloo 2', sans-serif;">Rund</button>
+          <button type="button" class="nlc-style" data-font="'Monoton', cursive" data-name="Retro" role="radio" aria-checked="false" style="font-family:'Monoton', cursive;">Retro</button>
+          <button type="button" class="nlc-style" data-font="'Bungee', cursive" data-name="Urban" role="radio" aria-checked="false" style="font-family:'Bungee', cursive;">Urban</button>
         </div>
       </div>
 
@@ -53,20 +66,90 @@
           <button type="button" class="nlc-swatch" style="--sw:#3d7bff" data-color="#3d7bff" data-name="Blau" role="radio" aria-checked="false"><span class="visually-hidden">Blau</span></button>
           <button type="button" class="nlc-swatch" style="--sw:#b968ff" data-color="#b968ff" data-name="Lila" role="radio" aria-checked="false"><span class="visually-hidden">Lila</span></button>
           <button type="button" class="nlc-swatch" style="--sw:#ff3b3b" data-color="#ff3b3b" data-name="Rot" role="radio" aria-checked="false"><span class="visually-hidden">Rot</span></button>
+          <button type="button" class="nlc-swatch" style="--sw:#ffe14d" data-color="#ffe14d" data-name="Gelb" role="radio" aria-checked="false"><span class="visually-hidden">Gelb</span></button>
+          <button type="button" class="nlc-swatch" style="--sw:#1de9b6" data-color="#1de9b6" data-name="Türkis" role="radio" aria-checked="false"><span class="visually-hidden">Türkis</span></button>
+          <button type="button" class="nlc-swatch" style="--sw:#8fd9ff" data-color="#8fd9ff" data-name="Eisblau" role="radio" aria-checked="false"><span class="visually-hidden">Eisblau</span></button>
+          <button type="button" class="nlc-swatch" style="--sw:#ffb340" data-color="#ffb340" data-name="Bernstein" role="radio" aria-checked="false"><span class="visually-hidden">Bernstein</span></button>
         </div>
       </div>
 
       <div class="nlc-field">
-        <span class="nlc-label">Grösse</span>
-        <div class="nlc-sizes" role="radiogroup" aria-label="Grösse wählen" id="nlcSizes">
+        <span class="nlc-label">Größe</span>
+        <div class="nlc-sizes" role="radiogroup" aria-label="Größe wählen" id="nlcSizes">
           <button type="button" class="nlc-size" data-size="S · ca. 30 cm Breite" data-scale="0.7" role="radio" aria-checked="false">S<small>ca. 30 cm</small></button>
           <button type="button" class="nlc-size is-active" data-size="M · ca. 50 cm Breite" data-scale="1" role="radio" aria-checked="true">M<small>ca. 50 cm</small></button>
           <button type="button" class="nlc-size" data-size="L · ca. 80 cm Breite" data-scale="1.35" role="radio" aria-checked="false">L<small>ca. 80 cm</small></button>
+          <button type="button" class="nlc-size" data-size="XL · ca. 110 cm Breite" data-scale="1.7" role="radio" aria-checked="false">XL<small>ca. 110 cm</small></button>
         </div>
       </div>
 
-      <a class="nlc-cta button" id="nlcCta" href="#">Angebot per E-Mail anfragen</a>
-      <p class="nlc-hint">Öffnet dein E-Mail-Programm mit der Konfiguration als Vorlage.</p>
+      <div class="nlc-field">
+        <span class="nlc-label">Montage</span>
+        <div class="nlc-chips" role="radiogroup" aria-label="Montage wählen" id="nlcMounts">
+          <button type="button" class="nlc-chip is-active" data-mount="Wandmontage" role="radio" aria-checked="true">Wand</button>
+          <button type="button" class="nlc-chip" data-mount="Hängend (Deckenmontage)" role="radio" aria-checked="false">Hängend</button>
+        </div>
+      </div>
+
+      <div class="nlc-field">
+        <span class="nlc-label">Einsatzort</span>
+        <div class="nlc-chips" role="radiogroup" aria-label="Einsatzort wählen" id="nlcEnvs">
+          <button type="button" class="nlc-chip is-active" data-env="Innen" role="radio" aria-checked="true">Innen</button>
+          <button type="button" class="nlc-chip" data-env="Außen (wetterfest)" role="radio" aria-checked="false">Außen</button>
+        </div>
+      </div>
+
+      <hr class="nlc-divider">
+
+      {% form 'contact', id: 'NeonConfiguratorForm', class: 'nlc-form' %}
+        <input type="hidden" name="contact[Konfiguration]" id="nlcConfigSummary" value="">
+        <input type="hidden" name="contact[Betreff]" value="Preisanfrage Neon-Konfigurator">
+
+        {% if form.posted_successfully? %}
+          <div class="nlc-success" role="status">
+            <strong>Danke!</strong> Deine Preisanfrage ist eingegangen. Wir melden uns innerhalb von 24&nbsp;Stunden mit einem unverbindlichen Angebot.
+          </div>
+        {% endif %}
+
+        {% if form.errors %}
+          <div class="nlc-error-box" role="alert">
+            <ul>
+              {% for field in form.errors %}
+                <li>
+                  {% if field == 'form' %}
+                    {{ form.errors.messages[field] }}
+                  {% else %}
+                    {{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        <label class="nlc-field" for="nlcName">
+          <span class="nlc-label">Name*</span>
+          <input required type="text" name="contact[name]" id="nlcName" value="{{ form.name }}" autocomplete="name">
+        </label>
+
+        <label class="nlc-field" for="nlcEmail">
+          <span class="nlc-label">E-Mail*</span>
+          <input required type="email" name="contact[email]" id="nlcEmail" value="{{ form.email }}" autocomplete="email">
+        </label>
+
+        <label class="nlc-field" for="nlcPhone">
+          <span class="nlc-label">Telefon (optional)</span>
+          <input type="tel" name="contact[phone]" id="nlcPhone" value="{{ form.phone }}" autocomplete="tel">
+        </label>
+
+        <label class="nlc-field" for="nlcBody">
+          <span class="nlc-label">Nachricht (optional)</span>
+          <textarea name="contact[body]" id="nlcBody" rows="3" maxlength="500" placeholder="Weitere Wünsche, Maße oder Wunschtermin ...">{{ form.body }}</textarea>
+        </label>
+
+        <button type="submit" class="nlc-cta button">Preisanfrage senden</button>
+        <p class="nlc-hint">Wir antworten innerhalb von 24 Stunden &ndash; unverbindlich und kostenlos.</p>
+      {% endform %}
     </div>
   </div>
 
@@ -74,23 +157,39 @@
   (function () {
     var section = document.currentScript.closest('.nlc-wrap');
     if (!section) return;
+    var stage = section.querySelector('#nlcStage');
     var preview = section.querySelector('#nlcPreview');
     var textInput = section.querySelector('#nlcText');
     var styleButtons = section.querySelectorAll('.nlc-style');
     var swatches = section.querySelectorAll('.nlc-swatch');
     var sizes = section.querySelectorAll('.nlc-size');
-    var cta = section.querySelector('#nlcCta');
-    var email = {{ section.settings.email | default: shop.email | json }};
+    var scenes = section.querySelectorAll('.nlc-scene');
+    var mounts = section.querySelectorAll('#nlcMounts .nlc-chip');
+    var envs = section.querySelectorAll('#nlcEnvs .nlc-chip');
+    var configSummary = section.querySelector('#nlcConfigSummary');
 
     var state = {
       text: textInput.value,
-      font: "'Syne', sans-serif",
       fontName: 'Modern',
-      color: '#3fd7e0',
+      font: "'Syne', sans-serif",
       colorName: 'Cyan',
+      color: '#3fd7e0',
       sizeLabel: 'M · ca. 50 cm Breite',
-      scale: 1
+      scale: 1,
+      bgName: 'Dunkel',
+      bg: '',
+      mount: 'Wandmontage',
+      env: 'Innen'
     };
+
+    function selectFromGroup(buttons, activeBtn) {
+      buttons.forEach(function (b) {
+        b.classList.remove('is-active');
+        b.setAttribute('aria-checked', 'false');
+      });
+      activeBtn.classList.add('is-active');
+      activeBtn.setAttribute('aria-checked', 'true');
+    }
 
     function render() {
       var text = state.text.trim() || 'NEONLIGHT';
@@ -99,21 +198,29 @@
       preview.style.setProperty('--nlc-scale', state.scale);
       preview.style.fontFamily = state.font;
 
-      var subject = 'Angebotsanfrage: Neon-Sign "' + text + '"';
-      var body = 'Hallo Neonlight-Team\n\nIch möchte gerne ein Angebot für folgendes Neon-Sign:\n\n' +
-        'Text: ' + text + '\n' +
-        'Stil: ' + state.fontName + '\n' +
-        'Farbe: ' + state.colorName + '\n' +
-        'Grösse: ' + state.sizeLabel + '\n\n' +
-        'Viele Grüsse';
-      cta.href = 'mailto:' + email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      if (state.bg) {
+        stage.style.backgroundImage = "linear-gradient(rgba(6,7,10,0.62), rgba(6,7,10,0.62)), url('" + state.bg + "')";
+        stage.classList.add('has-bg');
+      } else {
+        stage.style.backgroundImage = '';
+        stage.classList.remove('has-bg');
+      }
+
+      if (configSummary) {
+        configSummary.value =
+          'Text: ' + text +
+          ' | Stil: ' + state.fontName +
+          ' | Farbe: ' + state.colorName +
+          ' | Größe: ' + state.sizeLabel +
+          ' | Montage: ' + state.mount +
+          ' | Einsatzort: ' + state.env +
+          ' | Vorschau-Hintergrund: ' + state.bgName;
+      }
     }
 
     styleButtons.forEach(function (btn) {
       btn.addEventListener('click', function () {
-        styleButtons.forEach(function (b) { b.classList.remove('is-active'); b.setAttribute('aria-checked', 'false'); });
-        btn.classList.add('is-active');
-        btn.setAttribute('aria-checked', 'true');
+        selectFromGroup(styleButtons, btn);
         state.font = btn.dataset.font;
         state.fontName = btn.dataset.name;
         render();
@@ -127,20 +234,41 @@
 
     swatches.forEach(function (btn) {
       btn.addEventListener('click', function () {
-        swatches.forEach(function (b) { b.classList.remove('is-active'); b.setAttribute('aria-checked', 'false'); });
-        btn.classList.add('is-active');
-        btn.setAttribute('aria-checked', 'true');
+        selectFromGroup(swatches, btn);
         state.color = btn.dataset.color;
         state.colorName = btn.dataset.name;
         render();
       });
     });
 
+    scenes.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        selectFromGroup(scenes, btn);
+        state.bg = btn.dataset.bg;
+        state.bgName = btn.dataset.name;
+        render();
+      });
+    });
+
+    mounts.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        selectFromGroup(mounts, btn);
+        state.mount = btn.dataset.mount;
+        render();
+      });
+    });
+
+    envs.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        selectFromGroup(envs, btn);
+        state.env = btn.dataset.env;
+        render();
+      });
+    });
+
     sizes.forEach(function (btn) {
       btn.addEventListener('click', function () {
-        sizes.forEach(function (b) { b.classList.remove('is-active'); b.setAttribute('aria-checked', 'false'); });
-        btn.classList.add('is-active');
-        btn.setAttribute('aria-checked', 'true');
+        selectFromGroup(sizes, btn);
         state.sizeLabel = btn.dataset.size;
         state.scale = parseFloat(btn.dataset.scale);
         render();
@@ -148,6 +276,10 @@
     });
 
     render();
+
+    if (section.querySelector('.nlc-success')) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   })();
   </script>
 </div>

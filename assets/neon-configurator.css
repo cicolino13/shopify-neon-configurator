@@ -1,32 +1,32 @@
 .nlc-stage{
-  --nlc-bg:#120912;
-  --nlc-bg-raised:#1c0f1a;
-  --nlc-ink:#f6f2f7;
-  --nlc-ink-soft:#b9aec2;
-  --nlc-accent:#ff3fa4;
-  --nlc-accent-glow:rgba(255,63,164,.55);
+  --nlc-bg:#0b0c10;
+  --nlc-tile-bg:#111219;
+  --nlc-ink:#f4f5f7;
+  --nlc-ink-soft:#8a8a94;
+  --nlc-accent:#3fd7e0;
   min-height:400px;
-  background:radial-gradient(ellipse at 50% 40%, var(--nlc-bg-raised), var(--nlc-bg));
+  background:var(--nlc-bg);
   color:var(--nlc-ink);
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:1.25rem;
-  text-align:center;
+  gap:1.5rem;
   padding:3rem 1.5rem;
   font-family:'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
-.nlc-logo{display:flex;align-items:center;gap:0.75rem;color:var(--nlc-accent);}
-.nlc-icon{width:44px;height:44px;filter:drop-shadow(0 0 8px var(--nlc-accent-glow));}
-.nlc-wordmark{
-  font-family:'Unbounded', sans-serif;
-  font-weight:800;
-  font-size:1.6rem;
-  letter-spacing:-0.02em;
-  color:var(--nlc-accent);
-  text-shadow:0 0 8px var(--nlc-accent-glow), 0 0 24px rgba(255,63,164,.3);
+.nlc-logo{display:flex;align-items:center;gap:24px;}
+.nlc-tile{
+  width:78px;height:78px;border-radius:18px;background:var(--nlc-tile-bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.07);flex-shrink:0;
 }
+.nlc-tile-letter{font-family:'Syne', sans-serif;font-size:30px;font-weight:600;color:var(--nlc-ink);line-height:1;}
+.nlc-wordmark-block{display:flex;flex-direction:column;gap:12px;}
+.nlc-wordmark{font-family:'Syne', sans-serif;font-size:34px;font-weight:600;letter-spacing:0.2em;color:var(--nlc-ink);line-height:1;}
+.nlc-bar{border-radius:2px;background:var(--nlc-accent);box-shadow:0 0 4px var(--nlc-accent), 0 0 14px var(--nlc-accent), 0 0 30px var(--nlc-accent);}
+.nlc-bar-tile{width:28px;height:2.5px;box-shadow:0 0 3px var(--nlc-accent), 0 0 10px var(--nlc-accent);}
+.nlc-bar-wordmark{width:100%;height:3px;}
 .nlc-status{
   font-family:'IBM Plex Mono', ui-monospace, monospace;
   font-size:0.75rem;

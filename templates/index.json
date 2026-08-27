@@ -290,7 +290,7 @@
       },
       "block_order": ["heading", "text", "button"],
       "settings": {
-        "image": "shopify://shop_images/coffeeshop.jpg",
+        "image": "shopify://shop_images/pexels-photo-3592657.jpg",
         "height": "medium",
         "desktop_image_width": "medium",
         "layout": "text_first",

@@ -12,19 +12,19 @@
   "presets": [{ "name": "Neon" }]
 }
 {% endschema %}
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=Pacifico&family=Baloo+2:wght@600;700&family=IBM+Plex+Mono:wght@500&display=swap">
 {{ 'neon-configurator.css' | asset_url | stylesheet_tag }}
 
 <div class="nlc-wrap" id="konfigurator">
   <div class="nlc-intro">
     <span class="nlc-eyebrow">Live-Vorschau</span>
     <h2 class="nlc-heading">Gestalte dein Neon-Sign</h2>
-    <p class="nlc-sub">Text eingeben, Farbe und Grösse wählen. Wir melden uns innerhalb von 24&nbsp;Stunden mit einem unverbindlichen Angebot.</p>
+    <p class="nlc-sub">Text eingeben, Stil, Farbe und Grösse wählen. Wir melden uns innerhalb von 24&nbsp;Stunden mit einem unverbindlichen Angebot.</p>
   </div>
 
   <div class="nlc-tool">
     <div class="nlc-stage">
-      <span class="nlc-preview" id="nlcPreview" style="--nlc-color:#3fd7e0; --nlc-scale:1;">NEONLIGHT</span>
+      <span class="nlc-preview" id="nlcPreview" style="--nlc-color:#3fd7e0; --nlc-scale:1; font-family:'Syne', sans-serif;">NEONLIGHT</span>
     </div>
 
     <div class="nlc-controls">
@@ -34,6 +34,15 @@
       </label>
 
       <div class="nlc-field">
+        <span class="nlc-label">Stil</span>
+        <div class="nlc-styles" role="radiogroup" aria-label="Schriftstil wählen" id="nlcStyles">
+          <button type="button" class="nlc-style is-active" data-font="'Syne', sans-serif" data-name="Modern" role="radio" aria-checked="true" style="font-family:'Syne', sans-serif;">Modern</button>
+          <button type="button" class="nlc-style" data-font="'Pacifico', cursive" data-name="Skript" role="radio" aria-checked="false" style="font-family:'Pacifico', cursive;">Skript</button>
+          <button type="button" class="nlc-style" data-font="'Baloo 2', sans-serif" data-name="Rund" role="radio" aria-checked="false" style="font-family:'Baloo 2', sans-serif;">Rund</button>
+        </div>
+      </div>
+
+      <div class="nlc-field">
         <span class="nlc-label">Farbe</span>
         <div class="nlc-swatches" role="radiogroup" aria-label="Neonfarbe wählen" id="nlcSwatches">
           <button type="button" class="nlc-swatch is-active" style="--sw:#3fd7e0" data-color="#3fd7e0" data-name="Cyan" role="radio" aria-checked="true"><span class="visually-hidden">Cyan</span></button>
@@ -41,6 +50,9 @@
           <button type="button" class="nlc-swatch" style="--sw:#ffe9c7" data-color="#ffe9c7" data-name="Warmweiss" role="radio" aria-checked="false"><span class="visually-hidden">Warmweiss</span></button>
           <button type="button" class="nlc-swatch" style="--sw:#39ff88" data-color="#39ff88" data-name="Grün" role="radio" aria-checked="false"><span class="visually-hidden">Grün</span></button>
           <button type="button" class="nlc-swatch" style="--sw:#ff8a3d" data-color="#ff8a3d" data-name="Orange" role="radio" aria-checked="false"><span class="visually-hidden">Orange</span></button>
+          <button type="button" class="nlc-swatch" style="--sw:#3d7bff" data-color="#3d7bff" data-name="Blau" role="radio" aria-checked="false"><span class="visually-hidden">Blau</span></button>
+          <button type="button" class="nlc-swatch" style="--sw:#b968ff" data-color="#b968ff" data-name="Lila" role="radio" aria-checked="false"><span class="visually-hidden">Lila</span></button>
+          <button type="button" class="nlc-swatch" style="--sw:#ff3b3b" data-color="#ff3b3b" data-name="Rot" role="radio" aria-checked="false"><span class="visually-hidden">Rot</span></button>
         </div>
       </div>
 
@@ -64,6 +76,7 @@
     if (!section) return;
     var preview = section.querySelector('#nlcPreview');
     var textInput = section.querySelector('#nlcText');
+    var styleButtons = section.querySelectorAll('.nlc-style');
     var swatches = section.querySelectorAll('.nlc-swatch');
     var sizes = section.querySelectorAll('.nlc-size');
     var cta = section.querySelector('#nlcCta');
@@ -71,6 +84,8 @@
 
     var state = {
       text: textInput.value,
+      font: "'Syne', sans-serif",
+      fontName: 'Modern',
       color: '#3fd7e0',
       colorName: 'Cyan',
       sizeLabel: 'M · ca. 50 cm Breite',
@@ -82,15 +97,28 @@
       preview.textContent = text;
       preview.style.setProperty('--nlc-color', state.color);
       preview.style.setProperty('--nlc-scale', state.scale);
+      preview.style.fontFamily = state.font;
 
       var subject = 'Angebotsanfrage: Neon-Sign "' + text + '"';
       var body = 'Hallo Neonlight-Team\n\nIch möchte gerne ein Angebot für folgendes Neon-Sign:\n\n' +
         'Text: ' + text + '\n' +
+        'Stil: ' + state.fontName + '\n' +
         'Farbe: ' + state.colorName + '\n' +
         'Grösse: ' + state.sizeLabel + '\n\n' +
         'Viele Grüsse';
       cta.href = 'mailto:' + email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
     }
+
+    styleButtons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        styleButtons.forEach(function (b) { b.classList.remove('is-active'); b.setAttribute('aria-checked', 'false'); });
+        btn.classList.add('is-active');
+        btn.setAttribute('aria-checked', 'true');
+        state.font = btn.dataset.font;
+        state.fontName = btn.dataset.name;
+        render();
+      });
+    });
 
     textInput.addEventListener('input', function () {
       state.text = textInput.value;

@@ -61,15 +61,6 @@
             "link": ""
           }
         },
-        "ce": {
-          "type": "column",
-          "settings": {
-            "title": "CE-konform",
-            "text": "<p>Alle Leuchtschriften mit Konformitätserklärung.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
         "warranty": {
           "type": "column",
           "settings": {
@@ -80,7 +71,7 @@
           }
         }
       },
-      "block_order": ["ch", "offer", "ce", "warranty"],
+      "block_order": ["ch", "offer", "warranty"],
       "settings": {
         "title": "",
         "heading_size": "h2",
@@ -88,11 +79,11 @@
         "image_ratio": "adapt",
         "button_label": "",
         "button_link": "",
-        "columns_desktop": 4,
+        "columns_desktop": 3,
         "column_alignment": "center",
         "background_style": "none",
         "color_scheme": "scheme-2",
-        "columns_mobile": "2",
+        "columns_mobile": "1",
         "padding_top": 40,
         "padding_bottom": 40
       }

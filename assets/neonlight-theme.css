@@ -46,6 +46,50 @@ html {
   letter-spacing: 0.18em;
   line-height: 1;
   color: #f4f5f7;
+  white-space: nowrap;
+}
+
+/* Below 750px the header row is tight: hamburger + logo + search/account/cart
+   all compete for the same line, and the full-size wordmark wraps onto a
+   second line and collides with the icons. Shrink the mark and drop the
+   redundant left-hand search icon that Dawn adds whenever customer accounts
+   are enabled (the icon row already has its own search). */
+@media screen and (max-width: 749px) {
+  .header > .header__search {
+    display: none;
+  }
+
+  .nl-logo {
+    gap: 0.5rem;
+  }
+
+  .nl-logo__tile {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    gap: 3px;
+  }
+
+  .nl-logo__letter {
+    font-size: 13px;
+  }
+
+  .nl-logo__bar--tile {
+    width: 11px;
+  }
+
+  .nl-logo__word-wrap {
+    gap: 3px;
+  }
+
+  .nl-logo__word {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+
+  .nl-logo__bar--word {
+    height: 1.5px;
+  }
 }
 
 .nl-logo__bar {

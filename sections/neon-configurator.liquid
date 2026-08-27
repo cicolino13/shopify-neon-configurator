@@ -1,15 +1,125 @@
-{% schema %}{"name":"Neon configurator","presets":[{"name":"Neon"}]}{% endschema %}
+{% schema %}
+{
+  "name": "Neon configurator",
+  "settings": [
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Angebots-E-Mail",
+      "info": "Leer lassen, um die Shop-E-Mail-Adresse zu verwenden."
+    }
+  ],
+  "presets": [{ "name": "Neon" }]
+}
+{% endschema %}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=IBM+Plex+Mono:wght@500&display=swap">
-<div class="nlc-stage">
-  <div class="nlc-logo" aria-label="Neonlight">
-    <div class="nlc-tile">
-      <span class="nlc-tile-letter">N</span>
-      <span class="nlc-bar nlc-bar-tile"></span>
+{{ 'neon-configurator.css' | asset_url | stylesheet_tag }}
+
+<div class="nlc-wrap" id="konfigurator">
+  <div class="nlc-intro">
+    <span class="nlc-eyebrow">Live-Vorschau</span>
+    <h2 class="nlc-heading">Gestalte dein Neon-Sign</h2>
+    <p class="nlc-sub">Text eingeben, Farbe und Grösse wählen. Wir melden uns innerhalb von 24&nbsp;Stunden mit einem unverbindlichen Angebot.</p>
+  </div>
+
+  <div class="nlc-tool">
+    <div class="nlc-stage">
+      <span class="nlc-preview" id="nlcPreview" style="--nlc-color:#3fd7e0; --nlc-scale:1;">NEONLIGHT</span>
     </div>
-    <div class="nlc-wordmark-block">
-      <span class="nlc-wordmark">NEONLIGHT</span>
-      <span class="nlc-bar nlc-bar-wordmark"></span>
+
+    <div class="nlc-controls">
+      <label class="nlc-field" for="nlcText">
+        <span class="nlc-label">Dein Text</span>
+        <input type="text" id="nlcText" maxlength="20" value="NEONLIGHT" placeholder="z. B. Café Nova" autocomplete="off">
+      </label>
+
+      <div class="nlc-field">
+        <span class="nlc-label">Farbe</span>
+        <div class="nlc-swatches" role="radiogroup" aria-label="Neonfarbe wählen" id="nlcSwatches">
+          <button type="button" class="nlc-swatch is-active" style="--sw:#3fd7e0" data-color="#3fd7e0" data-name="Cyan" role="radio" aria-checked="true"><span class="visually-hidden">Cyan</span></button>
+          <button type="button" class="nlc-swatch" style="--sw:#ff3ea5" data-color="#ff3ea5" data-name="Pink" role="radio" aria-checked="false"><span class="visually-hidden">Pink</span></button>
+          <button type="button" class="nlc-swatch" style="--sw:#ffe9c7" data-color="#ffe9c7" data-name="Warmweiss" role="radio" aria-checked="false"><span class="visually-hidden">Warmweiss</span></button>
+          <button type="button" class="nlc-swatch" style="--sw:#39ff88" data-color="#39ff88" data-name="Grün" role="radio" aria-checked="false"><span class="visually-hidden">Grün</span></button>
+          <button type="button" class="nlc-swatch" style="--sw:#ff8a3d" data-color="#ff8a3d" data-name="Orange" role="radio" aria-checked="false"><span class="visually-hidden">Orange</span></button>
+        </div>
+      </div>
+
+      <div class="nlc-field">
+        <span class="nlc-label">Grösse</span>
+        <div class="nlc-sizes" role="radiogroup" aria-label="Grösse wählen" id="nlcSizes">
+          <button type="button" class="nlc-size" data-size="S · ca. 30 cm Breite" data-scale="0.7" role="radio" aria-checked="false">S<small>ca. 30 cm</small></button>
+          <button type="button" class="nlc-size is-active" data-size="M · ca. 50 cm Breite" data-scale="1" role="radio" aria-checked="true">M<small>ca. 50 cm</small></button>
+          <button type="button" class="nlc-size" data-size="L · ca. 80 cm Breite" data-scale="1.35" role="radio" aria-checked="false">L<small>ca. 80 cm</small></button>
+        </div>
+      </div>
+
+      <a class="nlc-cta button" id="nlcCta" href="#">Angebot per E-Mail anfragen</a>
+      <p class="nlc-hint">Öffnet dein E-Mail-Programm mit der Konfiguration als Vorlage.</p>
     </div>
   </div>
-  <span class="nlc-status">Konfigurator folgt</span>
+
+  <script>
+  (function () {
+    var section = document.currentScript.closest('.nlc-wrap');
+    if (!section) return;
+    var preview = section.querySelector('#nlcPreview');
+    var textInput = section.querySelector('#nlcText');
+    var swatches = section.querySelectorAll('.nlc-swatch');
+    var sizes = section.querySelectorAll('.nlc-size');
+    var cta = section.querySelector('#nlcCta');
+    var email = {{ section.settings.email | default: shop.email | json }};
+
+    var state = {
+      text: textInput.value,
+      color: '#3fd7e0',
+      colorName: 'Cyan',
+      sizeLabel: 'M · ca. 50 cm Breite',
+      scale: 1
+    };
+
+    function render() {
+      var text = state.text.trim() || 'NEONLIGHT';
+      preview.textContent = text;
+      preview.style.setProperty('--nlc-color', state.color);
+      preview.style.setProperty('--nlc-scale', state.scale);
+
+      var subject = 'Angebotsanfrage: Neon-Sign "' + text + '"';
+      var body = 'Hallo Neonlight-Team\n\nIch möchte gerne ein Angebot für folgendes Neon-Sign:\n\n' +
+        'Text: ' + text + '\n' +
+        'Farbe: ' + state.colorName + '\n' +
+        'Grösse: ' + state.sizeLabel + '\n\n' +
+        'Viele Grüsse';
+      cta.href = 'mailto:' + email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    }
+
+    textInput.addEventListener('input', function () {
+      state.text = textInput.value;
+      render();
+    });
+
+    swatches.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        swatches.forEach(function (b) { b.classList.remove('is-active'); b.setAttribute('aria-checked', 'false'); });
+        btn.classList.add('is-active');
+        btn.setAttribute('aria-checked', 'true');
+        state.color = btn.dataset.color;
+        state.colorName = btn.dataset.name;
+        render();
+      });
+    });
+
+    sizes.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        sizes.forEach(function (b) { b.classList.remove('is-active'); b.setAttribute('aria-checked', 'false'); });
+        btn.classList.add('is-active');
+        btn.setAttribute('aria-checked', 'true');
+        state.sizeLabel = btn.dataset.size;
+        state.scale = parseFloat(btn.dataset.scale);
+        render();
+      });
+    });
+
+    render();
+  })();
+  </script>
 </div>

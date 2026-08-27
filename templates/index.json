@@ -39,14 +39,167 @@
         "show_text_below": false
       }
     },
+    "trust_bar": {
+      "type": "multicolumn",
+      "blocks": {
+        "ch": {
+          "type": "column",
+          "settings": {
+            "title": "🇨🇭 Schweizer Firma",
+            "text": "<p>Versand und Support aus der Schweiz.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "offer": {
+          "type": "column",
+          "settings": {
+            "title": "Angebot in 24 h",
+            "text": "<p>Anfragen werden werktags innerhalb eines Tages beantwortet.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "ce": {
+          "type": "column",
+          "settings": {
+            "title": "CE-konform",
+            "text": "<p>Alle Leuchtschriften mit Konformitätserklärung.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "warranty": {
+          "type": "column",
+          "settings": {
+            "title": "2 Jahre Garantie",
+            "text": "<p>Auf Material und Verarbeitung.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": ["ch", "offer", "ce", "warranty"],
+      "settings": {
+        "title": "",
+        "heading_size": "h2",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "button_label": "",
+        "button_link": "",
+        "columns_desktop": 4,
+        "column_alignment": "center",
+        "background_style": "none",
+        "color_scheme": "scheme-2",
+        "columns_mobile": "2",
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    },
+    "tiles": {
+      "type": "multicolumn",
+      "blocks": {
+        "zuhause": {
+          "type": "column",
+          "settings": {
+            "title": "Für Zuhause",
+            "text": "<p>Neon-Deko für Wohnräume, Zimmer und besondere Anlässe.</p>",
+            "link_label": "Zur Kollektion",
+            "link": "shopify://collections/zuhause"
+          }
+        },
+        "business": {
+          "type": "column",
+          "settings": {
+            "title": "Für Ihr Geschäft",
+            "text": "<p>Ladenbeschriftung und Leuchtwerbung für Gastronomie und Retail.</p>",
+            "link_label": "Angebot anfragen",
+            "link": "shopify://pages/business"
+          }
+        },
+        "configurator": {
+          "type": "column",
+          "settings": {
+            "title": "Jetzt konfigurieren",
+            "text": "<p>Text, Farbe und Grösse selbst wählen und Angebot anfordern.</p>",
+            "link_label": "Zum Konfigurator",
+            "link": "#konfigurator"
+          }
+        }
+      },
+      "block_order": ["zuhause", "business", "configurator"],
+      "settings": {
+        "title": "Was suchen Sie?",
+        "heading_size": "h1",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "button_label": "",
+        "button_link": "",
+        "columns_desktop": 3,
+        "column_alignment": "left",
+        "background_style": "primary",
+        "color_scheme": "scheme-1",
+        "columns_mobile": "1",
+        "padding_top": 44,
+        "padding_bottom": 36
+      }
+    },
     "neon_configurator": {
       "type": "neon-configurator",
       "settings": {}
     },
+    "process": {
+      "type": "multicolumn",
+      "blocks": {
+        "step1": {
+          "type": "column",
+          "settings": {
+            "title": "1. Design wählen",
+            "text": "<p>Vorlage aus dem Sortiment nehmen oder im Konfigurator selbst gestalten.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "step2": {
+          "type": "column",
+          "settings": {
+            "title": "2. Angebot erhalten",
+            "text": "<p>Antwort mit Preis und Lieferzeit innerhalb von 24 Stunden.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "step3": {
+          "type": "column",
+          "settings": {
+            "title": "3. Produktion & Lieferung",
+            "text": "<p>Fertigung und Versand in die Schweiz oder EU.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": ["step1", "step2", "step3"],
+      "settings": {
+        "title": "So läuft eine Bestellung ab",
+        "heading_size": "h2",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "button_label": "",
+        "button_link": "",
+        "columns_desktop": 3,
+        "column_alignment": "left",
+        "background_style": "none",
+        "color_scheme": "scheme-1",
+        "columns_mobile": "1",
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
-        "title": "Featured products",
+        "title": "Sortiment",
         "heading_size": "h2",
         "description": "",
         "show_description": false,
@@ -70,11 +223,100 @@
         "padding_top": 44,
         "padding_bottom": 36
       }
+    },
+    "about_teaser": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Warum Neonlight",
+            "heading_size": "h1"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Neonlight ist ein Schweizer Familienunternehmen für LED-Neon-Leuchtschriften – individuell gefertigt für Zuhause und Geschäft.</p>",
+            "text_style": "body"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "button_label": "Mehr über uns",
+            "button_link": "shopify://pages/uber-uns",
+            "button_style_secondary": false
+          }
+        }
+      },
+      "block_order": ["heading", "text", "button"],
+      "settings": {
+        "height": "medium",
+        "desktop_image_width": "medium",
+        "layout": "image_first",
+        "image_behavior": "none",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "scheme-1",
+        "color_scheme": "scheme-1",
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    },
+    "business_banner": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Leuchtwerbung für Ihr Geschäft",
+            "heading_size": "h1"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Ladenbeschriftung, Schaufenster- und Empfangsbeschriftung – auf Anfrage offeriert und in der Schweiz montiert.</p>",
+            "text_style": "body"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "button_label": "Offerte anfragen",
+            "button_link": "shopify://pages/business",
+            "button_style_secondary": false
+          }
+        }
+      },
+      "block_order": ["heading", "text", "button"],
+      "settings": {
+        "height": "medium",
+        "desktop_image_width": "medium",
+        "layout": "text_first",
+        "image_behavior": "none",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "scheme-2",
+        "color_scheme": "scheme-2",
+        "padding_top": 40,
+        "padding_bottom": 48
+      }
     }
   },
   "order": [
     "image_banner",
+    "trust_bar",
+    "tiles",
     "neon_configurator",
-    "featured_collection"
+    "process",
+    "featured_collection",
+    "about_teaser",
+    "business_banner"
   ]
 }

@@ -1,0 +1,15 @@
+{%- comment -%}
+  Renders the Neonlight wordmark (N-icon tile + NEONLIGHT wordmark with a
+  glowing accent bar) in place of a plain text shop name. Used by
+  sections/header.liquid whenever no image logo is set in theme settings.
+{%- endcomment -%}
+<span class="nl-logo">
+  <span class="nl-logo__tile">
+    <span class="nl-logo__letter">N</span>
+    <span class="nl-logo__bar nl-logo__bar--tile"></span>
+  </span>
+  <span class="nl-logo__word-wrap">
+    <span class="nl-logo__word">NEONLIGHT</span>
+    <span class="nl-logo__bar nl-logo__bar--word"></span>
+  </span>
+</span>

@@ -46,9 +46,6 @@
 .nlc-ambient{
   position:absolute;inset:0;pointer-events:none;
 }
-@media (prefers-reduced-motion: no-preference){
-  .nlc-ambient.is-rgb{ animation: nlc-rgb-cycle 6s linear infinite; }
-}
 .nlc-board{
   position:relative;
   padding:1.5rem 2rem;
@@ -93,17 +90,12 @@
 }
 @media (prefers-reduced-motion: no-preference){
   .nlc-preview{ animation: nlc-flicker 5s infinite; }
-  .nlc-preview.is-rgb{ animation: nlc-flicker 5s infinite, nlc-rgb-cycle 6s linear infinite; }
 }
 @keyframes nlc-flicker{
   0%,100%{ opacity:1; }
   92%{ opacity:1; }
   93%{ opacity:0.85; }
   94%{ opacity:1; }
-}
-@keyframes nlc-rgb-cycle{
-  from{ filter:hue-rotate(0deg); }
-  to{ filter:hue-rotate(360deg); }
 }
 
 .nlc-controls{

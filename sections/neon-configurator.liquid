@@ -7,7 +7,12 @@
 {% endschema %}
 {{ 'neon-configurator.css' | asset_url | stylesheet_tag }}
 
-<div class="nlc-wrap" id="konfigurator">
+{% assign nlc_start_step = 1 %}
+{% if form.posted_successfully? or form.errors %}
+  {% assign nlc_start_step = 2 %}
+{% endif %}
+
+<div class="nlc-wrap" id="konfigurator" data-start-step="{{ nlc_start_step }}">
   <div class="nlc-intro">
     <span class="nlc-eyebrow">Live-Vorschau</span>
     <h2 class="nlc-heading">Gestalte dein Neon-Sign</h2>
@@ -38,118 +43,135 @@
     </div>
 
     <div class="nlc-controls">
-      <label class="nlc-field" for="nlcText-{{ section.id }}">
-        <span class="nlc-label">Dein Text</span>
-        <input type="text" id="nlcText-{{ section.id }}" maxlength="20" value="NEONLIGHT" placeholder="z. B. Café Nova" autocomplete="off">
-      </label>
-
-      <div class="nlc-field">
-        <span class="nlc-label">Stil</span>
-        <div class="nlc-styles" role="radiogroup" aria-label="Schriftstil wählen" id="nlcStyles-{{ section.id }}">
-          <button type="button" class="nlc-style is-active" data-font="'Syne', sans-serif" data-name="Modern" role="radio" aria-checked="true" style="font-family:'Syne', sans-serif;">Modern</button>
-          <button type="button" class="nlc-style" data-font="'Pacifico', cursive" data-name="Skript" role="radio" aria-checked="false" style="font-family:'Pacifico', cursive;">Skript</button>
-          <button type="button" class="nlc-style" data-font="'Baloo 2', sans-serif" data-name="Rund" role="radio" aria-checked="false" style="font-family:'Baloo 2', sans-serif;">Rund</button>
-          <button type="button" class="nlc-style" data-font="'Monoton', cursive" data-name="Retro" role="radio" aria-checked="false" style="font-family:'Monoton', cursive;">Retro</button>
-          <button type="button" class="nlc-style" data-font="'Bungee', cursive" data-name="Urban" role="radio" aria-checked="false" style="font-family:'Bungee', cursive;">Urban</button>
-        </div>
+      <div class="nlc-stepper" id="nlcStepper-{{ section.id }}" aria-hidden="true">
+        <span class="nlc-step-dot" data-step-dot="1">1</span>
+        <span class="nlc-step-label" data-step-label="1">Gestalten</span>
+        <span class="nlc-step-line"></span>
+        <span class="nlc-step-dot" data-step-dot="2">2</span>
+        <span class="nlc-step-label" data-step-label="2">Kontakt</span>
       </div>
+      <p class="visually-hidden" role="status" aria-live="polite" id="nlcStepAnnounce-{{ section.id }}"></p>
 
-      <div class="nlc-field">
-        <span class="nlc-label">Farbe</span>
-        <div class="nlc-swatches" role="radiogroup" aria-label="Neonfarbe wählen" id="nlcSwatches-{{ section.id }}">
-          <button type="button" class="nlc-swatch is-active" style="--sw:#3fd7e0" data-color="#3fd7e0" data-name="Cyan" role="radio" aria-checked="true"><span class="visually-hidden">Cyan</span></button>
-          <button type="button" class="nlc-swatch" style="--sw:#ff3ea5" data-color="#ff3ea5" data-name="Pink" role="radio" aria-checked="false"><span class="visually-hidden">Pink</span></button>
-          <button type="button" class="nlc-swatch" style="--sw:#ffe9c7" data-color="#ffe9c7" data-name="Warmweiss" role="radio" aria-checked="false"><span class="visually-hidden">Warmweiss</span></button>
-          <button type="button" class="nlc-swatch" style="--sw:#39ff88" data-color="#39ff88" data-name="Grün" role="radio" aria-checked="false"><span class="visually-hidden">Grün</span></button>
-          <button type="button" class="nlc-swatch" style="--sw:#ff8a3d" data-color="#ff8a3d" data-name="Orange" role="radio" aria-checked="false"><span class="visually-hidden">Orange</span></button>
-          <button type="button" class="nlc-swatch" style="--sw:#3d7bff" data-color="#3d7bff" data-name="Blau" role="radio" aria-checked="false"><span class="visually-hidden">Blau</span></button>
-          <button type="button" class="nlc-swatch" style="--sw:#b968ff" data-color="#b968ff" data-name="Lila" role="radio" aria-checked="false"><span class="visually-hidden">Lila</span></button>
-          <button type="button" class="nlc-swatch" style="--sw:#ff3b3b" data-color="#ff3b3b" data-name="Rot" role="radio" aria-checked="false"><span class="visually-hidden">Rot</span></button>
-          <button type="button" class="nlc-swatch" style="--sw:#ffe14d" data-color="#ffe14d" data-name="Gelb" role="radio" aria-checked="false"><span class="visually-hidden">Gelb</span></button>
-          <button type="button" class="nlc-swatch" style="--sw:#1de9b6" data-color="#1de9b6" data-name="Türkis" role="radio" aria-checked="false"><span class="visually-hidden">Türkis</span></button>
-          <button type="button" class="nlc-swatch" style="--sw:#8fd9ff" data-color="#8fd9ff" data-name="Eisblau" role="radio" aria-checked="false"><span class="visually-hidden">Eisblau</span></button>
-          <button type="button" class="nlc-swatch" style="--sw:#ffb340" data-color="#ffb340" data-name="Bernstein" role="radio" aria-checked="false"><span class="visually-hidden">Bernstein</span></button>
-        </div>
-      </div>
+      <div class="nlc-step" data-step="1" id="nlcStep1-{{ section.id }}">
+        <label class="nlc-field" for="nlcText-{{ section.id }}">
+          <span class="nlc-label">Dein Text</span>
+          <input type="text" id="nlcText-{{ section.id }}" maxlength="20" value="NEONLIGHT" placeholder="z. B. Café Nova" autocomplete="off">
+        </label>
 
-      <div class="nlc-field">
-        <span class="nlc-label">Größe</span>
-        <div class="nlc-sizes" role="radiogroup" aria-label="Größe wählen" id="nlcSizes-{{ section.id }}">
-          <button type="button" class="nlc-size" data-size="S · ca. 30 cm Breite" data-scale="0.7" role="radio" aria-checked="false">S<small>ca. 30 cm</small></button>
-          <button type="button" class="nlc-size is-active" data-size="M · ca. 50 cm Breite" data-scale="1" role="radio" aria-checked="true">M<small>ca. 50 cm</small></button>
-          <button type="button" class="nlc-size" data-size="L · ca. 80 cm Breite" data-scale="1.35" role="radio" aria-checked="false">L<small>ca. 80 cm</small></button>
-          <button type="button" class="nlc-size" data-size="XL · ca. 110 cm Breite" data-scale="1.7" role="radio" aria-checked="false">XL<small>ca. 110 cm</small></button>
-        </div>
-      </div>
-
-      <div class="nlc-field">
-        <span class="nlc-label">Montage</span>
-        <div class="nlc-chips" role="radiogroup" aria-label="Montage wählen" id="nlcMounts-{{ section.id }}">
-          <button type="button" class="nlc-chip is-active" data-mount="Wandmontage" role="radio" aria-checked="true">Wand</button>
-          <button type="button" class="nlc-chip" data-mount="Hängend (Deckenmontage)" role="radio" aria-checked="false">Hängend</button>
-        </div>
-      </div>
-
-      <div class="nlc-field">
-        <span class="nlc-label">Einsatzort</span>
-        <div class="nlc-chips" role="radiogroup" aria-label="Einsatzort wählen" id="nlcEnvs-{{ section.id }}">
-          <button type="button" class="nlc-chip is-active" data-env="Innen" role="radio" aria-checked="true">Innen</button>
-          <button type="button" class="nlc-chip" data-env="Außen (wetterfest)" role="radio" aria-checked="false">Außen</button>
-        </div>
-      </div>
-
-      <hr class="nlc-divider">
-
-      {% assign nlc_form_id = 'NeonConfiguratorForm-' | append: section.id %}
-      {% form 'contact', id: nlc_form_id, class: 'nlc-form' %}
-        <input type="hidden" name="contact[Konfiguration]" id="nlcConfigSummary-{{ section.id }}" value="">
-        <input type="hidden" name="contact[Betreff]" value="Preisanfrage Neon-Konfigurator">
-
-        {% if form.posted_successfully? %}
-          <div class="nlc-success" role="status">
-            <strong>Danke!</strong> Deine Preisanfrage ist eingegangen. Wir melden uns innerhalb von 24&nbsp;Stunden mit einem unverbindlichen Angebot.
+        <div class="nlc-field">
+          <span class="nlc-label">Stil</span>
+          <div class="nlc-styles" role="radiogroup" aria-label="Schriftstil wählen" id="nlcStyles-{{ section.id }}">
+            <button type="button" class="nlc-style is-active" data-font="'Syne', sans-serif" data-name="Modern" role="radio" aria-checked="true" style="font-family:'Syne', sans-serif;">Modern</button>
+            <button type="button" class="nlc-style" data-font="'Pacifico', cursive" data-name="Skript" role="radio" aria-checked="false" style="font-family:'Pacifico', cursive;">Skript</button>
+            <button type="button" class="nlc-style" data-font="'Baloo 2', sans-serif" data-name="Rund" role="radio" aria-checked="false" style="font-family:'Baloo 2', sans-serif;">Rund</button>
+            <button type="button" class="nlc-style" data-font="'Monoton', cursive" data-name="Retro" role="radio" aria-checked="false" style="font-family:'Monoton', cursive;">Retro</button>
+            <button type="button" class="nlc-style" data-font="'Bungee', cursive" data-name="Urban" role="radio" aria-checked="false" style="font-family:'Bungee', cursive;">Urban</button>
           </div>
-        {% endif %}
+        </div>
 
-        {% if form.errors %}
-          <div class="nlc-error-box" role="alert">
-            <ul>
-              {% for field in form.errors %}
-                <li>
-                  {% if field == 'form' %}
-                    {{ form.errors.messages[field] }}
-                  {% else %}
-                    {{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}
-                  {% endif %}
-                </li>
-              {% endfor %}
-            </ul>
+        <div class="nlc-field">
+          <span class="nlc-label">Farbe</span>
+          <div class="nlc-swatches" role="radiogroup" aria-label="Neonfarbe wählen" id="nlcSwatches-{{ section.id }}">
+            <button type="button" class="nlc-swatch is-active" style="--sw:#3fd7e0" data-color="#3fd7e0" data-name="Cyan" role="radio" aria-checked="true"><span class="visually-hidden">Cyan</span></button>
+            <button type="button" class="nlc-swatch" style="--sw:#ff3ea5" data-color="#ff3ea5" data-name="Pink" role="radio" aria-checked="false"><span class="visually-hidden">Pink</span></button>
+            <button type="button" class="nlc-swatch" style="--sw:#ffe9c7" data-color="#ffe9c7" data-name="Warmweiss" role="radio" aria-checked="false"><span class="visually-hidden">Warmweiss</span></button>
+            <button type="button" class="nlc-swatch" style="--sw:#39ff88" data-color="#39ff88" data-name="Grün" role="radio" aria-checked="false"><span class="visually-hidden">Grün</span></button>
+            <button type="button" class="nlc-swatch" style="--sw:#ff8a3d" data-color="#ff8a3d" data-name="Orange" role="radio" aria-checked="false"><span class="visually-hidden">Orange</span></button>
+            <button type="button" class="nlc-swatch" style="--sw:#3d7bff" data-color="#3d7bff" data-name="Blau" role="radio" aria-checked="false"><span class="visually-hidden">Blau</span></button>
+            <button type="button" class="nlc-swatch" style="--sw:#b968ff" data-color="#b968ff" data-name="Lila" role="radio" aria-checked="false"><span class="visually-hidden">Lila</span></button>
+            <button type="button" class="nlc-swatch" style="--sw:#ff3b3b" data-color="#ff3b3b" data-name="Rot" role="radio" aria-checked="false"><span class="visually-hidden">Rot</span></button>
+            <button type="button" class="nlc-swatch" style="--sw:#ffe14d" data-color="#ffe14d" data-name="Gelb" role="radio" aria-checked="false"><span class="visually-hidden">Gelb</span></button>
+            <button type="button" class="nlc-swatch" style="--sw:#1de9b6" data-color="#1de9b6" data-name="Türkis" role="radio" aria-checked="false"><span class="visually-hidden">Türkis</span></button>
+            <button type="button" class="nlc-swatch" style="--sw:#8fd9ff" data-color="#8fd9ff" data-name="Eisblau" role="radio" aria-checked="false"><span class="visually-hidden">Eisblau</span></button>
+            <button type="button" class="nlc-swatch" style="--sw:#ffb340" data-color="#ffb340" data-name="Bernstein" role="radio" aria-checked="false"><span class="visually-hidden">Bernstein</span></button>
           </div>
-        {% endif %}
+        </div>
 
-        <label class="nlc-field" for="nlcName-{{ section.id }}">
-          <span class="nlc-label">Name*</span>
-          <input required type="text" name="contact[name]" id="nlcName-{{ section.id }}" value="{{ form.name | escape }}" autocomplete="name">
-        </label>
+        <div class="nlc-field">
+          <span class="nlc-label">Größe</span>
+          <div class="nlc-sizes" role="radiogroup" aria-label="Größe wählen" id="nlcSizes-{{ section.id }}">
+            <button type="button" class="nlc-size" data-size="S · ca. 30 cm Breite" data-scale="0.7" role="radio" aria-checked="false">S<small>ca. 30 cm</small></button>
+            <button type="button" class="nlc-size is-active" data-size="M · ca. 50 cm Breite" data-scale="1" role="radio" aria-checked="true">M<small>ca. 50 cm</small></button>
+            <button type="button" class="nlc-size" data-size="L · ca. 80 cm Breite" data-scale="1.35" role="radio" aria-checked="false">L<small>ca. 80 cm</small></button>
+            <button type="button" class="nlc-size" data-size="XL · ca. 110 cm Breite" data-scale="1.7" role="radio" aria-checked="false">XL<small>ca. 110 cm</small></button>
+          </div>
+        </div>
 
-        <label class="nlc-field" for="nlcEmail-{{ section.id }}">
-          <span class="nlc-label">E-Mail*</span>
-          <input required type="email" name="contact[email]" id="nlcEmail-{{ section.id }}" value="{{ form.email | escape }}" autocomplete="email">
-        </label>
+        <div class="nlc-field">
+          <span class="nlc-label">Montage</span>
+          <div class="nlc-chips" role="radiogroup" aria-label="Montage wählen" id="nlcMounts-{{ section.id }}">
+            <button type="button" class="nlc-chip is-active" data-mount="Wandmontage" role="radio" aria-checked="true">Wand</button>
+            <button type="button" class="nlc-chip" data-mount="Hängend (Deckenmontage)" role="radio" aria-checked="false">Hängend</button>
+          </div>
+        </div>
 
-        <label class="nlc-field" for="nlcPhone-{{ section.id }}">
-          <span class="nlc-label">Telefon (optional)</span>
-          <input type="tel" name="contact[phone]" id="nlcPhone-{{ section.id }}" value="{{ form.phone | escape }}" autocomplete="tel">
-        </label>
+        <div class="nlc-field">
+          <span class="nlc-label">Einsatzort</span>
+          <div class="nlc-chips" role="radiogroup" aria-label="Einsatzort wählen" id="nlcEnvs-{{ section.id }}">
+            <button type="button" class="nlc-chip is-active" data-env="Innen" role="radio" aria-checked="true">Innen</button>
+            <button type="button" class="nlc-chip" data-env="Außen (wetterfest)" role="radio" aria-checked="false">Außen</button>
+          </div>
+        </div>
 
-        <label class="nlc-field" for="nlcBody-{{ section.id }}">
-          <span class="nlc-label">Nachricht (optional)</span>
-          <textarea name="contact[body]" id="nlcBody-{{ section.id }}" rows="3" maxlength="500" placeholder="Weitere Wünsche, Maße oder Wunschtermin ...">{{ form.body | escape }}</textarea>
-        </label>
+        <button type="button" class="nlc-cta button" id="nlcNextBtn-{{ section.id }}">Weiter zur Kontaktanfrage</button>
+      </div>
 
-        <button type="submit" class="nlc-cta button">Preisanfrage senden</button>
-        <p class="nlc-hint">Wir antworten innerhalb von 24 Stunden &ndash; unverbindlich und kostenlos.</p>
-      {% endform %}
+      <div class="nlc-step" data-step="2" id="nlcStep2-{{ section.id }}" hidden>
+        <button type="button" class="nlc-back" id="nlcBackBtn-{{ section.id }}">&larr; Zurück zur Gestaltung</button>
+
+        <div class="nlc-recap" id="nlcRecap-{{ section.id }}"></div>
+
+        {% assign nlc_form_id = 'NeonConfiguratorForm-' | append: section.id %}
+        {% form 'contact', id: nlc_form_id, class: 'nlc-form' %}
+          <input type="hidden" name="contact[Konfiguration]" id="nlcConfigSummary-{{ section.id }}" value="">
+          <input type="hidden" name="contact[Betreff]" value="Preisanfrage Neon-Konfigurator">
+
+          {% if form.posted_successfully? %}
+            <div class="nlc-success" role="status">
+              <strong>Danke!</strong> Deine Preisanfrage ist eingegangen. Wir melden uns innerhalb von 24&nbsp;Stunden mit einem unverbindlichen Angebot.
+            </div>
+          {% endif %}
+
+          {% if form.errors %}
+            <div class="nlc-error-box" role="alert">
+              <ul>
+                {% for field in form.errors %}
+                  <li>
+                    {% if field == 'form' %}
+                      {{ form.errors.messages[field] }}
+                    {% else %}
+                      {{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          <label class="nlc-field" for="nlcName-{{ section.id }}">
+            <span class="nlc-label">Name*</span>
+            <input required type="text" name="contact[name]" id="nlcName-{{ section.id }}" value="{{ form.name | escape }}" autocomplete="name">
+          </label>
+
+          <label class="nlc-field" for="nlcEmail-{{ section.id }}">
+            <span class="nlc-label">E-Mail*</span>
+            <input required type="email" name="contact[email]" id="nlcEmail-{{ section.id }}" value="{{ form.email | escape }}" autocomplete="email">
+          </label>
+
+          <label class="nlc-field" for="nlcPhone-{{ section.id }}">
+            <span class="nlc-label">Telefon (optional)</span>
+            <input type="tel" name="contact[phone]" id="nlcPhone-{{ section.id }}" value="{{ form.phone | escape }}" autocomplete="tel">
+          </label>
+
+          <label class="nlc-field" for="nlcBody-{{ section.id }}">
+            <span class="nlc-label">Nachricht (optional)</span>
+            <textarea name="contact[body]" id="nlcBody-{{ section.id }}" rows="3" maxlength="500" placeholder="Weitere Wünsche, Maße oder Wunschtermin ...">{{ form.body | escape }}</textarea>
+          </label>
+
+          <button type="submit" class="nlc-cta button">Preisanfrage senden</button>
+          <p class="nlc-hint">Wir antworten innerhalb von 24 Stunden &ndash; unverbindlich und kostenlos.</p>
+        {% endform %}
+      </div>
     </div>
   </div>
 
@@ -167,6 +189,13 @@
     var mounts = section.querySelectorAll('#nlcMounts-{{ section.id }} .nlc-chip');
     var envs = section.querySelectorAll('#nlcEnvs-{{ section.id }} .nlc-chip');
     var configSummary = section.querySelector('#nlcConfigSummary-{{ section.id }}');
+    var step1 = section.querySelector('#nlcStep1-{{ section.id }}');
+    var step2 = section.querySelector('#nlcStep2-{{ section.id }}');
+    var nextBtn = section.querySelector('#nlcNextBtn-{{ section.id }}');
+    var backBtn = section.querySelector('#nlcBackBtn-{{ section.id }}');
+    var stepper = section.querySelector('#nlcStepper-{{ section.id }}');
+    var stepAnnounce = section.querySelector('#nlcStepAnnounce-{{ section.id }}');
+    var recap = section.querySelector('#nlcRecap-{{ section.id }}');
 
     var state = {
       text: textInput.value,
@@ -233,6 +262,43 @@
           ' | Einsatzort: ' + state.env +
           ' | Vorschau-Hintergrund: ' + state.bgName;
       }
+
+      if (recap) {
+        recap.textContent = '"' + text + '" · ' + state.fontName + ' · ' + state.colorName + ' · ' + state.sizeLabel.split(' ·')[0] + ' · ' + state.mount + ' · ' + state.env;
+      }
+    }
+
+    function goToStep(n) {
+      if (n === 2) {
+        step1.hidden = true;
+        step2.hidden = false;
+        stepper.querySelector('[data-step-dot="1"]').classList.add('is-done');
+        stepper.querySelector('[data-step-dot="2"]').classList.add('is-active');
+        stepper.querySelector('[data-step-dot="1"]').classList.remove('is-active');
+        if (stepAnnounce) stepAnnounce.textContent = 'Schritt 2 von 2: Kontaktdaten';
+        var heading = step2.querySelector('.nlc-back');
+        if (heading) { heading.focus(); }
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        step2.hidden = true;
+        step1.hidden = false;
+        stepper.querySelector('[data-step-dot="2"]').classList.remove('is-active');
+        stepper.querySelector('[data-step-dot="1"]').classList.add('is-active');
+        stepper.querySelector('[data-step-dot="1"]').classList.remove('is-done');
+        if (stepAnnounce) stepAnnounce.textContent = 'Schritt 1 von 2: Gestalten';
+      }
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        render();
+        goToStep(2);
+      });
+    }
+    if (backBtn) {
+      backBtn.addEventListener('click', function () {
+        goToStep(1);
+      });
     }
 
     styleButtons.forEach(function (btn) {
@@ -300,6 +366,13 @@
     initRadiogroup(envs);
 
     render();
+
+    var startStep = parseInt(section.dataset.startStep, 10) || 1;
+    if (startStep === 2) {
+      goToStep(2);
+    } else {
+      stepper.querySelector('[data-step-dot="1"]').classList.add('is-active');
+    }
 
     var feedback = section.querySelector('.nlc-success, .nlc-error-box');
     if (feedback) {

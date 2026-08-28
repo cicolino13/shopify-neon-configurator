@@ -22,6 +22,7 @@
   <div class="nlc-tool">
     <div class="nlc-stage-col">
       <div class="nlc-stage" id="nlcStage-{{ section.id }}">
+        <div class="nlc-ambient" id="nlcAmbient-{{ section.id }}"></div>
         <div class="nlc-board">
           <span class="nlc-preview" id="nlcPreview-{{ section.id }}" style="--nlc-color:#3fd7e0; --nlc-core-color:#b2eff3; --nlc-scale:1; --nlc-glow:1; font-family:'Syne', sans-serif;">NEONLIGHT</span>
         </div>
@@ -229,6 +230,7 @@
     var stepAnnounce = section.querySelector('#nlcStepAnnounce-{{ section.id }}');
     var recap = section.querySelector('#nlcRecap-{{ section.id }}');
     var colorNameEl = section.querySelector('#nlcColorName-{{ section.id }}');
+    var ambientEl = section.querySelector('#nlcAmbient-{{ section.id }}');
 
     var state = {
       text: textInput.value,
@@ -311,6 +313,9 @@
       preview.style.setProperty('--nlc-glow', state.glow);
       preview.style.fontFamily = state.font;
       preview.classList.toggle('is-rgb', state.isRgb);
+      if (ambientEl) {
+        ambientEl.classList.toggle('is-rgb', state.isRgb);
+      }
 
       if (colorNameEl) {
         colorNameEl.textContent = state.colorName;
@@ -338,12 +343,14 @@
 
     function updateStageVisual(animate) {
       function apply() {
-        var ambient = 'radial-gradient(circle at 50% 42%, ' + hexToRgba(state.color, 0.35) + ' 0%, ' + hexToRgba(state.color, 0) + ' 62%)';
+        if (ambientEl) {
+          ambientEl.style.background = 'radial-gradient(circle at 50% 46%, ' + hexToRgba(state.color, 0.3) + ' 0%, ' + hexToRgba(state.color, 0) + ' 26%)';
+        }
         if (state.bg) {
-          stage.style.backgroundImage = ambient + ", linear-gradient(rgba(6,7,10,0.62), rgba(6,7,10,0.62)), url('" + state.bg + "')";
+          stage.style.backgroundImage = "linear-gradient(rgba(6,7,10,0.62), rgba(6,7,10,0.62)), url('" + state.bg + "')";
           stage.classList.add('has-bg');
         } else {
-          stage.style.backgroundImage = ambient + ', repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 4px)';
+          stage.style.backgroundImage = 'repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 4px)';
           stage.classList.remove('has-bg');
         }
         stage.style.opacity = '1';

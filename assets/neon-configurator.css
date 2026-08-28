@@ -107,11 +107,11 @@
 .nlc-field input[type="email"]:focus-visible,
 .nlc-field input[type="tel"]:focus-visible{outline:2px solid var(--nlc-accent);outline-offset:1px;}
 
-.nlc-styles{display:flex;gap:0.5rem;flex-wrap:wrap;}
+.nlc-styles{display:grid;grid-template-columns:repeat(3, 1fr);gap:0.5rem;}
 .nlc-style{
-  flex:1;min-width:5.5rem;
   background:var(--nlc-bg);border:1px solid var(--nlc-line);border-radius:8px;
   padding:0.55rem 0.6rem;color:var(--nlc-ink);font-size:1rem;cursor:pointer;
+  text-align:center;
 }
 .nlc-style.is-active{border-color:var(--nlc-accent);color:var(--nlc-accent);}
 .nlc-style:focus-visible{outline:2px solid var(--nlc-accent);outline-offset:2px;}

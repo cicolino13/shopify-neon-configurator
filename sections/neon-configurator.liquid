@@ -101,10 +101,22 @@
         </div>
 
         <div class="nlc-field">
-          <span class="nlc-label">Montage</span>
-          <div class="nlc-chips" role="radiogroup" aria-label="Montage wählen" id="nlcMounts-{{ section.id }}">
-            <button type="button" class="nlc-chip is-active" data-mount="Wandmontage" role="radio" aria-checked="true">Wand</button>
-            <button type="button" class="nlc-chip" data-mount="Hängend (Deckenmontage)" role="radio" aria-checked="false">Hängend</button>
+          <span class="nlc-label">Rückwand</span>
+          <div class="nlc-sizes" role="radiogroup" aria-label="Rückwand wählen" id="nlcBackings-{{ section.id }}">
+            <button type="button" class="nlc-size is-active" data-backing="Konturgeschnitten (transparent)" role="radio" aria-checked="true">Kontur<small>transparent, unsichtbar</small></button>
+            <button type="button" class="nlc-size" data-backing="Rechteckig (transparent)" role="radio" aria-checked="false">Rechteckig<small>transparent</small></button>
+            <button type="button" class="nlc-size" data-backing="Rechteckig (schwarz)" role="radio" aria-checked="false">Rechteckig<small>schwarz, matt</small></button>
+            <button type="button" class="nlc-size" data-backing="Ohne Rückwand" role="radio" aria-checked="false">Ohne<small>nur Buchstaben</small></button>
+          </div>
+        </div>
+
+        <div class="nlc-field">
+          <span class="nlc-label">Befestigung</span>
+          <div class="nlc-sizes" role="radiogroup" aria-label="Befestigung wählen" id="nlcMounts-{{ section.id }}">
+            <button type="button" class="nlc-size is-active" data-mount="Wandmontage mit Abstandshaltern" role="radio" aria-checked="true">Wand<small>Abstandshalter</small></button>
+            <button type="button" class="nlc-size" data-mount="Wandmontage flach (Direktmontage)" role="radio" aria-checked="false">Wand flach<small>Direktmontage</small></button>
+            <button type="button" class="nlc-size" data-mount="Hängend (Kette/Stahlseil von der Decke)" role="radio" aria-checked="false">Hängend<small>Kette/Seil</small></button>
+            <button type="button" class="nlc-size" data-mount="Standfuß (Tischaufsteller)" role="radio" aria-checked="false">Standfuß<small>Tischaufsteller</small></button>
           </div>
         </div>
 
@@ -188,8 +200,9 @@
     var styleButtons = section.querySelectorAll('#nlcStyles-{{ section.id }} .nlc-style');
     var swatches = section.querySelectorAll('#nlcSwatches-{{ section.id }} .nlc-swatch');
     var sizes = section.querySelectorAll('#nlcSizes-{{ section.id }} .nlc-size');
+    var backings = section.querySelectorAll('#nlcBackings-{{ section.id }} .nlc-size');
     var scenes = section.querySelectorAll('#nlcScenes-{{ section.id }} .nlc-scene');
-    var mounts = section.querySelectorAll('#nlcMounts-{{ section.id }} .nlc-chip');
+    var mounts = section.querySelectorAll('#nlcMounts-{{ section.id }} .nlc-size');
     var envs = section.querySelectorAll('#nlcEnvs-{{ section.id }} .nlc-chip');
     var configSummary = section.querySelector('#nlcConfigSummary-{{ section.id }}');
     var step1 = section.querySelector('#nlcStep1-{{ section.id }}');
@@ -210,9 +223,10 @@
       color: '#3fd7e0',
       sizeLabel: 'M · ca. 50 cm Breite',
       scale: 1,
+      backing: 'Konturgeschnitten (transparent)',
       bgName: 'Wohnzimmer',
       bg: 'https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-29298710.jpg',
-      mount: 'Wandmontage',
+      mount: 'Wandmontage mit Abstandshaltern',
       env: 'Innen'
     };
 
@@ -260,13 +274,14 @@
           ' | Stil: ' + state.fontName +
           ' | Farbe: ' + state.colorName +
           ' | Größe: ' + state.sizeLabel +
-          ' | Montage: ' + state.mount +
+          ' | Rückwand: ' + state.backing +
+          ' | Befestigung: ' + state.mount +
           ' | Einsatzort: ' + state.env +
           ' | Vorschau-Hintergrund: ' + state.bgName;
       }
 
       if (recap) {
-        recap.textContent = '"' + text + '" · ' + state.fontName + ' · ' + state.colorName + ' · ' + state.sizeLabel.split(' ·')[0] + ' · ' + state.mount + ' · ' + state.env;
+        recap.textContent = '"' + text + '" · ' + state.fontName + ' · ' + state.colorName + ' · ' + state.sizeLabel.split(' ·')[0] + ' · ' + state.backing + ' · ' + state.mount + ' · ' + state.env;
       }
     }
 
@@ -384,9 +399,18 @@
       });
     });
 
+    backings.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        selectFromGroup(backings, btn);
+        state.backing = btn.dataset.backing;
+        render();
+      });
+    });
+
     initRadiogroup(styleButtons);
     initRadiogroup(swatches);
     initRadiogroup(sizes);
+    initRadiogroup(backings);
     initRadiogroup(scenes);
     initRadiogroup(mounts);
     initRadiogroup(envs);

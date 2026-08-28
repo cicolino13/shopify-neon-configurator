@@ -1,6 +1,6 @@
 .nlc-wrap{
-  --nlc-bg:#0b0c10;
-  --nlc-tile-bg:#111219;
+  --nlc-bg:#18130f;
+  --nlc-tile-bg:#1d1712;
   --nlc-ink:#f4f5f7;
   --nlc-ink-soft:#a89f97;
   --nlc-accent:#3fd7e0;
@@ -23,15 +23,15 @@
 .nlc-sub{margin:0;color:var(--nlc-ink-soft);font-size:0.95rem;}
 
 .nlc-tool{
-  max-width:960px;margin:0 auto;
-  display:grid;grid-template-columns:1.2fr 1fr;gap:0;
+  max-width:1040px;margin:0 auto;
+  display:grid;grid-template-columns:1.65fr 1fr;gap:0;
   border:1px solid var(--nlc-line);border-radius:20px;overflow:hidden;
   background:var(--nlc-tile-bg);
 }
 
 .nlc-stage-col{display:flex;flex-direction:column;}
 .nlc-stage{
-  min-height:280px;flex:1;
+  min-height:380px;flex:1;
   display:flex;align-items:center;justify-content:center;
   padding:2.5rem 1.5rem;
   background:
@@ -69,7 +69,7 @@
 .nlc-preview{
   font-family:'Syne', sans-serif;
   font-weight:700;
-  font-size:calc(2.4rem * var(--nlc-scale, 1));
+  font-size:calc(2.9rem * var(--nlc-scale, 1));
   letter-spacing:0.05em;
   color:var(--nlc-color, var(--nlc-accent));
   text-shadow:
@@ -91,8 +91,8 @@
 }
 
 .nlc-controls{
-  padding:2.1rem 1.9rem;
-  display:flex;flex-direction:column;gap:1.3rem;
+  padding:1.8rem 1.5rem;
+  display:flex;flex-direction:column;gap:1.05rem;
   border-left:1px solid var(--nlc-line);
 }
 
@@ -109,7 +109,7 @@
 .nlc-step-label{font-size:0.82rem;color:var(--nlc-ink-soft);font-weight:600;}
 .nlc-step-line{flex:1;height:1px;background:var(--nlc-line);min-width:1.5rem;}
 
-.nlc-step{display:flex;flex-direction:column;gap:1.5rem;}
+.nlc-step{display:flex;flex-direction:column;gap:1.05rem;}
 .nlc-step[hidden]{display:none;}
 
 .nlc-back{

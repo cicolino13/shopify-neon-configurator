@@ -36,9 +36,8 @@
   min-height:380px;flex:1;
   display:flex;align-items:center;justify-content:center;
   padding:2.5rem 1.5rem;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(63,215,224,0.08), transparent 65%),
-    repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 4px);
+  background-color:#15161d;
+  background-image:repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 4px);
   background-size:cover;
   background-position:center;
   transition:opacity 0.2s ease;
@@ -73,11 +72,13 @@
   font-weight:700;
   font-size:calc(min(2.9rem, 9vw) * var(--nlc-scale, 1));
   letter-spacing:0.05em;
-  color:var(--nlc-color, var(--nlc-accent));
+  color:var(--nlc-core-color, var(--nlc-color, var(--nlc-accent)));
   text-shadow:
-    0 0 calc(1px * var(--nlc-glow, 1)) var(--nlc-color, var(--nlc-accent)),
+    0 0 calc(0.5px * var(--nlc-glow, 1)) var(--nlc-core-color, var(--nlc-color, var(--nlc-accent))),
+    0 0 calc(1.5px * var(--nlc-glow, 1)) var(--nlc-color, var(--nlc-accent)),
     0 0 calc(3px * var(--nlc-glow, 1)) var(--nlc-color, var(--nlc-accent)),
-    0 0 calc(7px * var(--nlc-glow, 1)) var(--nlc-color, var(--nlc-accent));
+    0 0 calc(5px * var(--nlc-glow, 1)) var(--nlc-color, var(--nlc-accent)),
+    0 0 calc(7.5px * var(--nlc-glow, 1)) var(--nlc-color, var(--nlc-accent));
   text-align:center;
   word-break:break-word;
   transition:font-size 0.2s ease;

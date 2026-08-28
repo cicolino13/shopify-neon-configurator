@@ -23,14 +23,17 @@
     <div class="nlc-stage-col">
       <div class="nlc-stage" id="nlcStage-{{ section.id }}">
         <div class="nlc-board">
-          <span class="nlc-preview" id="nlcPreview-{{ section.id }}" style="--nlc-color:#3fd7e0; --nlc-scale:1; --nlc-glow:1; font-family:'Syne', sans-serif;">NEONLIGHT</span>
+          <span class="nlc-preview" id="nlcPreview-{{ section.id }}" style="--nlc-color:#3fd7e0; --nlc-core-color:#b2eff3; --nlc-scale:1; --nlc-glow:1; font-family:'Syne', sans-serif;">NEONLIGHT</span>
         </div>
       </div>
       <div class="nlc-scenes" role="radiogroup" aria-label="Hintergrund wählen" id="nlcScenes-{{ section.id }}">
+        <button type="button" class="nlc-scene is-active" data-bg="https://cdn.shopify.com/s/files/1/0943/7203/6947/files/hecke-hintergrund.jpg" data-name="Hecke" role="radio" aria-checked="true">
+          <span class="nlc-scene-swatch" style="background-image:url('https://cdn.shopify.com/s/files/1/0943/7203/6947/files/hecke-hintergrund.jpg?width=200');"></span>Hecke
+        </button>
         <button type="button" class="nlc-scene" data-bg="" data-name="Dunkel" role="radio" aria-checked="false">
           <span class="nlc-scene-swatch nlc-scene-dark"></span>Dunkel
         </button>
-        <button type="button" class="nlc-scene is-active" data-bg="https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-29298710.jpg" data-name="Wohnzimmer" role="radio" aria-checked="true">
+        <button type="button" class="nlc-scene" data-bg="https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-29298710.jpg" data-name="Wohnzimmer" role="radio" aria-checked="false">
           <span class="nlc-scene-swatch" style="background-image:url('https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-29298710.jpg?width=200');"></span>Wohnzimmer
         </button>
         <button type="button" class="nlc-scene" data-bg="https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-6447392.jpg" data-name="Ladengeschäft" role="radio" aria-checked="false">
@@ -62,6 +65,8 @@
           <span class="nlc-label">Stil</span>
           <div class="nlc-styles" role="radiogroup" aria-label="Schriftstil wählen" id="nlcStyles-{{ section.id }}">
             <button type="button" class="nlc-style is-active" data-font="'Syne', sans-serif" data-name="Modern" data-glow="1" role="radio" aria-checked="true" style="font-family:'Syne', sans-serif;">Modern</button>
+            <button type="button" class="nlc-style" data-font="'Great Vibes', cursive" data-name="Elegant" data-glow="0.5" role="radio" aria-checked="false" style="font-family:'Great Vibes', cursive;">Elegant</button>
+            <button type="button" class="nlc-style" data-font="'Dancing Script', cursive" data-name="Klassisch" data-glow="0.7" role="radio" aria-checked="false" style="font-family:'Dancing Script', cursive;">Klassisch</button>
             <button type="button" class="nlc-style" data-font="'Pacifico', cursive" data-name="Skript" data-glow="0.7" role="radio" aria-checked="false" style="font-family:'Pacifico', cursive;">Skript</button>
             <button type="button" class="nlc-style" data-font="'Baloo 2', sans-serif" data-name="Rund" data-glow="0.85" role="radio" aria-checked="false" style="font-family:'Baloo 2', sans-serif;">Rund</button>
             <button type="button" class="nlc-style" data-font="'Monoton', cursive" data-name="Retro" data-glow="0.5" role="radio" aria-checked="false" style="font-family:'Monoton', cursive;">Retro</button>
@@ -224,8 +229,8 @@
       sizeLabel: 'M · ca. 50 cm Breite',
       scale: 1,
       backing: 'Konturgeschnitten (transparent)',
-      bgName: 'Wohnzimmer',
-      bg: 'https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-29298710.jpg',
+      bgName: 'Hecke',
+      bg: 'https://cdn.shopify.com/s/files/1/0943/7203/6947/files/hecke-hintergrund.jpg',
       mount: 'Wandmontage mit Abstandshaltern',
       env: 'Innen'
     };
@@ -256,10 +261,39 @@
       });
     }
 
+    function hexToRgb(hex) {
+      hex = hex.replace('#', '');
+      return {
+        r: parseInt(hex.substring(0, 2), 16),
+        g: parseInt(hex.substring(2, 4), 16),
+        b: parseInt(hex.substring(4, 6), 16)
+      };
+    }
+
+    function rgbToHex(r, g, b) {
+      return '#' + [r, g, b].map(function (x) {
+        return ('0' + Math.max(0, Math.min(255, x)).toString(16)).slice(-2);
+      }).join('');
+    }
+
+    function mixWithWhite(hex, amount) {
+      var c = hexToRgb(hex);
+      var r = Math.round(c.r + (255 - c.r) * amount);
+      var g = Math.round(c.g + (255 - c.g) * amount);
+      var b = Math.round(c.b + (255 - c.b) * amount);
+      return rgbToHex(r, g, b);
+    }
+
+    function hexToRgba(hex, alpha) {
+      var c = hexToRgb(hex);
+      return 'rgba(' + c.r + ',' + c.g + ',' + c.b + ',' + alpha + ')';
+    }
+
     function render() {
       var text = state.text.trim() || 'NEONLIGHT';
       preview.textContent = text;
       preview.style.setProperty('--nlc-color', state.color);
+      preview.style.setProperty('--nlc-core-color', mixWithWhite(state.color, 0.6));
       preview.style.setProperty('--nlc-scale', state.scale);
       preview.style.setProperty('--nlc-glow', state.glow);
       preview.style.fontFamily = state.font;
@@ -287,13 +321,14 @@
 
     var bgFadeTimer = null;
 
-    function setStageBackground(bg, animate) {
+    function updateStageVisual(animate) {
       function apply() {
-        if (bg) {
-          stage.style.backgroundImage = "linear-gradient(rgba(6,7,10,0.62), rgba(6,7,10,0.62)), url('" + bg + "')";
+        var ambient = 'radial-gradient(circle at 50% 42%, ' + hexToRgba(state.color, 0.35) + ' 0%, ' + hexToRgba(state.color, 0) + ' 62%)';
+        if (state.bg) {
+          stage.style.backgroundImage = ambient + ", linear-gradient(rgba(6,7,10,0.62), rgba(6,7,10,0.62)), url('" + state.bg + "')";
           stage.classList.add('has-bg');
         } else {
-          stage.style.backgroundImage = '';
+          stage.style.backgroundImage = ambient + ', repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 4px)';
           stage.classList.remove('has-bg');
         }
         stage.style.opacity = '1';
@@ -361,6 +396,7 @@
         state.color = btn.dataset.color;
         state.colorName = btn.dataset.name;
         render();
+        updateStageVisual(false);
       });
     });
 
@@ -369,7 +405,7 @@
         selectFromGroup(scenes, btn);
         state.bg = btn.dataset.bg;
         state.bgName = btn.dataset.name;
-        setStageBackground(state.bg, true);
+        updateStageVisual(true);
         render();
       });
     });
@@ -416,7 +452,7 @@
     initRadiogroup(envs);
 
     render();
-    setStageBackground(state.bg, false);
+    updateStageVisual(false);
 
     var startStep = parseInt(section.dataset.startStep, 10) || 1;
     if (startStep === 2) {

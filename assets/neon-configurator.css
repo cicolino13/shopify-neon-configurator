@@ -73,9 +73,9 @@
   letter-spacing:0.05em;
   color:var(--nlc-color, var(--nlc-accent));
   text-shadow:
-    0 0 calc(2px * var(--nlc-glow, 1)) var(--nlc-color, var(--nlc-accent)),
-    0 0 calc(6px * var(--nlc-glow, 1)) var(--nlc-color, var(--nlc-accent)),
-    0 0 calc(14px * var(--nlc-glow, 1)) var(--nlc-color, var(--nlc-accent));
+    0 0 calc(1px * var(--nlc-glow, 1)) var(--nlc-color, var(--nlc-accent)),
+    0 0 calc(3px * var(--nlc-glow, 1)) var(--nlc-color, var(--nlc-accent)),
+    0 0 calc(7px * var(--nlc-glow, 1)) var(--nlc-color, var(--nlc-accent));
   text-align:center;
   word-break:break-word;
   transition:font-size 0.2s ease;

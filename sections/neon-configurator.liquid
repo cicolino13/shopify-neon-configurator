@@ -36,11 +36,11 @@
         <button type="button" class="nlc-scene" data-bg="https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-29298710.jpg" data-name="Wohnzimmer" role="radio" aria-checked="false">
           <span class="nlc-scene-swatch" style="background-image:url('https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-29298710.jpg?width=200');"></span>Wohnzimmer
         </button>
-        <button type="button" class="nlc-scene" data-bg="https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-6447392.jpg" data-name="Ladengeschäft" role="radio" aria-checked="false">
-          <span class="nlc-scene-swatch" style="background-image:url('https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-6447392.jpg?width=200');"></span>Laden
+        <button type="button" class="nlc-scene" data-bg="https://cdn.shopify.com/s/files/1/0943/7203/6947/files/backstein-hintergrund.jpg" data-name="Backstein" role="radio" aria-checked="false">
+          <span class="nlc-scene-swatch" style="background-image:url('https://cdn.shopify.com/s/files/1/0943/7203/6947/files/backstein-hintergrund.jpg?width=200');"></span>Backstein
         </button>
-        <button type="button" class="nlc-scene" data-bg="https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-5490972.jpg" data-name="Bar &amp; Restaurant" role="radio" aria-checked="false">
-          <span class="nlc-scene-swatch" style="background-image:url('https://cdn.shopify.com/s/files/1/0943/7203/6947/files/pexels-photo-5490972.jpg?width=200');"></span>Bar
+        <button type="button" class="nlc-scene" data-bg="https://cdn.shopify.com/s/files/1/0943/7203/6947/files/bartresen-hintergrund.jpg" data-name="Bar &amp; Restaurant" role="radio" aria-checked="false">
+          <span class="nlc-scene-swatch" style="background-image:url('https://cdn.shopify.com/s/files/1/0943/7203/6947/files/bartresen-hintergrund.jpg?width=200');"></span>Bar
         </button>
       </div>
     </div>
@@ -83,6 +83,7 @@
             <button type="button" class="nlc-swatch is-active" style="--sw:#3fd7e0" data-color="#3fd7e0" data-name="Cyan" role="radio" aria-checked="true"><span class="visually-hidden">Cyan</span></button>
             <button type="button" class="nlc-swatch" style="--sw:#ff3ea5" data-color="#ff3ea5" data-name="Pink" role="radio" aria-checked="false"><span class="visually-hidden">Pink</span></button>
             <button type="button" class="nlc-swatch" style="--sw:#ffe9c7" data-color="#ffe9c7" data-name="Warmweiss" role="radio" aria-checked="false"><span class="visually-hidden">Warmweiss</span></button>
+            <button type="button" class="nlc-swatch" style="--sw:#f5f7ff" data-color="#f5f7ff" data-name="Weiß" role="radio" aria-checked="false"><span class="visually-hidden">Weiß</span></button>
             <button type="button" class="nlc-swatch" style="--sw:#39ff88" data-color="#39ff88" data-name="Grün" role="radio" aria-checked="false"><span class="visually-hidden">Grün</span></button>
             <button type="button" class="nlc-swatch" style="--sw:#ff8a3d" data-color="#ff8a3d" data-name="Orange" role="radio" aria-checked="false"><span class="visually-hidden">Orange</span></button>
             <button type="button" class="nlc-swatch" style="--sw:#3d7bff" data-color="#3d7bff" data-name="Blau" role="radio" aria-checked="false"><span class="visually-hidden">Blau</span></button>
@@ -92,6 +93,7 @@
             <button type="button" class="nlc-swatch" style="--sw:#1de9b6" data-color="#1de9b6" data-name="Türkis" role="radio" aria-checked="false"><span class="visually-hidden">Türkis</span></button>
             <button type="button" class="nlc-swatch" style="--sw:#8fd9ff" data-color="#8fd9ff" data-name="Eisblau" role="radio" aria-checked="false"><span class="visually-hidden">Eisblau</span></button>
             <button type="button" class="nlc-swatch" style="--sw:#ffb340" data-color="#ffb340" data-name="Bernstein" role="radio" aria-checked="false"><span class="visually-hidden">Bernstein</span></button>
+            <button type="button" class="nlc-swatch" style="background:conic-gradient(from 0deg, #ff3b3b, #ffe14d, #39ff88, #3fd7e0, #3d7bff, #b968ff, #ff3ea5, #ff3b3b);" data-color="#ff3b3b" data-name="RGB" data-rgb="true" role="radio" aria-checked="false"><span class="visually-hidden">RGB Farbwechsel</span></button>
           </div>
         </div>
 
@@ -130,6 +132,14 @@
           <div class="nlc-chips" role="radiogroup" aria-label="Einsatzort wählen" id="nlcEnvs-{{ section.id }}">
             <button type="button" class="nlc-chip is-active" data-env="Innen" role="radio" aria-checked="true">Innen</button>
             <button type="button" class="nlc-chip" data-env="Außen (wetterfest)" role="radio" aria-checked="false">Außen</button>
+          </div>
+        </div>
+
+        <div class="nlc-field">
+          <span class="nlc-label">Zubehör</span>
+          <div class="nlc-chips" role="radiogroup" aria-label="Zubehör wählen" id="nlcAccessories-{{ section.id }}">
+            <button type="button" class="nlc-chip is-active" data-accessory="Mit Fernbedienung &amp; Dimmer" role="radio" aria-checked="true">Fernbedienung &amp; Dimmer</button>
+            <button type="button" class="nlc-chip" data-accessory="Ohne Fernbedienung" role="radio" aria-checked="false">Ohne</button>
           </div>
         </div>
 
@@ -209,6 +219,7 @@
     var scenes = section.querySelectorAll('#nlcScenes-{{ section.id }} .nlc-scene');
     var mounts = section.querySelectorAll('#nlcMounts-{{ section.id }} .nlc-size');
     var envs = section.querySelectorAll('#nlcEnvs-{{ section.id }} .nlc-chip');
+    var accessories = section.querySelectorAll('#nlcAccessories-{{ section.id }} .nlc-chip');
     var configSummary = section.querySelector('#nlcConfigSummary-{{ section.id }}');
     var step1 = section.querySelector('#nlcStep1-{{ section.id }}');
     var step2 = section.querySelector('#nlcStep2-{{ section.id }}');
@@ -226,13 +237,15 @@
       glow: 1,
       colorName: 'Cyan',
       color: '#3fd7e0',
+      isRgb: false,
       sizeLabel: 'M · ca. 50 cm Breite',
       scale: 1,
       backing: 'Konturgeschnitten (transparent)',
       bgName: 'Hecke',
       bg: 'https://cdn.shopify.com/s/files/1/0943/7203/6947/files/hecke-hintergrund.jpg',
       mount: 'Wandmontage mit Abstandshaltern',
-      env: 'Innen'
+      env: 'Innen',
+      accessory: 'Mit Fernbedienung & Dimmer'
     };
 
     function selectFromGroup(buttons, activeBtn) {
@@ -297,6 +310,7 @@
       preview.style.setProperty('--nlc-scale', state.scale);
       preview.style.setProperty('--nlc-glow', state.glow);
       preview.style.fontFamily = state.font;
+      preview.classList.toggle('is-rgb', state.isRgb);
 
       if (colorNameEl) {
         colorNameEl.textContent = state.colorName;
@@ -311,11 +325,12 @@
           ' | Rückwand: ' + state.backing +
           ' | Befestigung: ' + state.mount +
           ' | Einsatzort: ' + state.env +
+          ' | Zubehör: ' + state.accessory +
           ' | Vorschau-Hintergrund: ' + state.bgName;
       }
 
       if (recap) {
-        recap.textContent = '"' + text + '" · ' + state.fontName + ' · ' + state.colorName + ' · ' + state.sizeLabel.split(' ·')[0] + ' · ' + state.backing + ' · ' + state.mount + ' · ' + state.env;
+        recap.textContent = '"' + text + '" · ' + state.fontName + ' · ' + state.colorName + ' · ' + state.sizeLabel.split(' ·')[0] + ' · ' + state.backing + ' · ' + state.mount + ' · ' + state.env + ' · ' + state.accessory;
       }
     }
 
@@ -395,6 +410,7 @@
         selectFromGroup(swatches, btn);
         state.color = btn.dataset.color;
         state.colorName = btn.dataset.name;
+        state.isRgb = btn.dataset.rgb === 'true';
         render();
         updateStageVisual(false);
       });
@@ -426,6 +442,14 @@
       });
     });
 
+    accessories.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        selectFromGroup(accessories, btn);
+        state.accessory = btn.dataset.accessory;
+        render();
+      });
+    });
+
     sizes.forEach(function (btn) {
       btn.addEventListener('click', function () {
         selectFromGroup(sizes, btn);
@@ -450,6 +474,7 @@
     initRadiogroup(scenes);
     initRadiogroup(mounts);
     initRadiogroup(envs);
+    initRadiogroup(accessories);
 
     render();
     updateStageVisual(false);

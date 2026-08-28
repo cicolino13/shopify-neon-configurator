@@ -71,7 +71,7 @@
 .nlc-preview{
   font-family:'Syne', sans-serif;
   font-weight:700;
-  font-size:calc(2.9rem * var(--nlc-scale, 1));
+  font-size:calc(min(2.9rem, 9vw) * var(--nlc-scale, 1));
   letter-spacing:0.05em;
   color:var(--nlc-color, var(--nlc-accent));
   text-shadow:

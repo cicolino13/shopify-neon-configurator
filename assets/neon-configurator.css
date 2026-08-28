@@ -1,8 +1,10 @@
 .nlc-wrap{
   --nlc-bg:#18130f;
   --nlc-tile-bg:#1d1712;
+  --nlc-card-bg:#241d16;
   --nlc-ink:#f4f5f7;
   --nlc-ink-soft:#a89f97;
+  --nlc-label:#d2c6b8;
   --nlc-accent:#3fd7e0;
   --nlc-warm:#ffb37a;
   --nlc-line:#2b2823;
@@ -39,7 +41,7 @@
     repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 4px);
   background-size:cover;
   background-position:center;
-  transition:background-image 0.25s ease;
+  transition:opacity 0.2s ease;
 }
 .nlc-board{
   padding:1.5rem 2rem;
@@ -124,8 +126,14 @@
   background:var(--nlc-bg);border:1px solid var(--nlc-line);border-radius:10px;
   padding:0.75rem 0.95rem;color:var(--nlc-ink-soft);font-size:0.85rem;line-height:1.4;
 }
-.nlc-field{display:flex;flex-direction:column;gap:0.55rem;}
-.nlc-label{font-size:0.8rem;font-weight:600;letter-spacing:0.01em;color:var(--nlc-ink-soft);}
+.nlc-field{
+  display:flex;flex-direction:column;gap:0.6rem;
+  background:var(--nlc-card-bg);border:1px solid var(--nlc-line);border-radius:14px;
+  padding:0.85rem 0.9rem;
+}
+.nlc-label{font-size:0.82rem;font-weight:700;letter-spacing:0.01em;color:var(--nlc-label);}
+.nlc-field-head{display:flex;align-items:baseline;justify-content:space-between;gap:0.5rem;}
+.nlc-value{font-size:0.78rem;font-weight:600;color:var(--nlc-accent);}
 .nlc-field input[type="text"],
 .nlc-field input[type="email"],
 .nlc-field input[type="tel"]{

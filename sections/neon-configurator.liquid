@@ -70,7 +70,10 @@
         </div>
 
         <div class="nlc-field">
-          <span class="nlc-label">Farbe</span>
+          <div class="nlc-field-head">
+            <span class="nlc-label">Farbe</span>
+            <span class="nlc-value" id="nlcColorName-{{ section.id }}">Cyan</span>
+          </div>
           <div class="nlc-swatches" role="radiogroup" aria-label="Neonfarbe wählen" id="nlcSwatches-{{ section.id }}">
             <button type="button" class="nlc-swatch is-active" style="--sw:#3fd7e0" data-color="#3fd7e0" data-name="Cyan" role="radio" aria-checked="true"><span class="visually-hidden">Cyan</span></button>
             <button type="button" class="nlc-swatch" style="--sw:#ff3ea5" data-color="#ff3ea5" data-name="Pink" role="radio" aria-checked="false"><span class="visually-hidden">Pink</span></button>
@@ -196,6 +199,7 @@
     var stepper = section.querySelector('#nlcStepper-{{ section.id }}');
     var stepAnnounce = section.querySelector('#nlcStepAnnounce-{{ section.id }}');
     var recap = section.querySelector('#nlcRecap-{{ section.id }}');
+    var colorNameEl = section.querySelector('#nlcColorName-{{ section.id }}');
 
     var state = {
       text: textInput.value,
@@ -246,12 +250,8 @@
       preview.style.setProperty('--nlc-glow', state.glow);
       preview.style.fontFamily = state.font;
 
-      if (state.bg) {
-        stage.style.backgroundImage = "linear-gradient(rgba(6,7,10,0.62), rgba(6,7,10,0.62)), url('" + state.bg + "')";
-        stage.classList.add('has-bg');
-      } else {
-        stage.style.backgroundImage = '';
-        stage.classList.remove('has-bg');
+      if (colorNameEl) {
+        colorNameEl.textContent = state.colorName;
       }
 
       if (configSummary) {
@@ -268,6 +268,28 @@
       if (recap) {
         recap.textContent = '"' + text + '" · ' + state.fontName + ' · ' + state.colorName + ' · ' + state.sizeLabel.split(' ·')[0] + ' · ' + state.mount + ' · ' + state.env;
       }
+    }
+
+    var bgFadeTimer = null;
+
+    function setStageBackground(bg, animate) {
+      function apply() {
+        if (bg) {
+          stage.style.backgroundImage = "linear-gradient(rgba(6,7,10,0.62), rgba(6,7,10,0.62)), url('" + bg + "')";
+          stage.classList.add('has-bg');
+        } else {
+          stage.style.backgroundImage = '';
+          stage.classList.remove('has-bg');
+        }
+        stage.style.opacity = '1';
+      }
+      if (bgFadeTimer) { window.clearTimeout(bgFadeTimer); }
+      if (!animate) {
+        apply();
+        return;
+      }
+      stage.style.opacity = '0';
+      bgFadeTimer = window.setTimeout(apply, 200);
     }
 
     function goToStep(n) {
@@ -332,6 +354,7 @@
         selectFromGroup(scenes, btn);
         state.bg = btn.dataset.bg;
         state.bgName = btn.dataset.name;
+        setStageBackground(state.bg, true);
         render();
       });
     });
@@ -369,6 +392,7 @@
     initRadiogroup(envs);
 
     render();
+    setStageBackground(state.bg, false);
 
     var startStep = parseInt(section.dataset.startStep, 10) || 1;
     if (startStep === 2) {

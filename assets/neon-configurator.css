@@ -43,12 +43,6 @@
 }
 .nlc-board{
   padding:1.5rem 2rem;
-  border-radius:16px;
-  background:rgba(10,11,15,0.4);
-  border:1px solid rgba(255,255,255,0.08);
-  box-shadow:
-    0 20px 60px rgba(0,0,0,0.4),
-    0 0 90px -25px rgba(255,179,122,0.22);
   max-width:100%;
 }
 .nlc-scenes{
@@ -79,9 +73,9 @@
   letter-spacing:0.05em;
   color:var(--nlc-color, var(--nlc-accent));
   text-shadow:
-    0 0 6px var(--nlc-color, var(--nlc-accent)),
-    0 0 18px var(--nlc-color, var(--nlc-accent)),
-    0 0 42px var(--nlc-color, var(--nlc-accent));
+    0 0 calc(6px * var(--nlc-glow, 1)) var(--nlc-color, var(--nlc-accent)),
+    0 0 calc(18px * var(--nlc-glow, 1)) var(--nlc-color, var(--nlc-accent)),
+    0 0 calc(42px * var(--nlc-glow, 1)) var(--nlc-color, var(--nlc-accent));
   text-align:center;
   word-break:break-word;
   transition:font-size 0.2s ease;

@@ -49,8 +49,12 @@ def cmd_backtest(args: argparse.Namespace) -> None:
         costs=config.costs,
     )
 
-    print(f"Strategy: {config.strategy.name} {config.strategy.params}")
-    print(report.summary())
+    if args.format == "markdown":
+        print(f"**Strategy:** `{config.strategy.name}` {config.strategy.params}\n")
+        print(report.markdown())
+    else:
+        print(f"Strategy: {config.strategy.name} {config.strategy.params}")
+        print(report.summary())
 
     if args.trades:
         print()
@@ -83,18 +87,30 @@ def cmd_sweep(args: argparse.Namespace) -> None:
         )
         return
 
-    print(f"\nTop {min(args.top, len(ranked))} of {len(ranked)} valid combinations (metric: {args.metric})\n")
-    header = f"{'score':>9}  {'return':>9}  {'PF':>6}  {'DD':>7}  {'trades':>6}  params"
-    print(header)
-    print("-" * len(header))
+    shown = ranked[: args.top]
+    print(f"\nTop {len(shown)} of {len(ranked)} valid combinations (metric: {args.metric})\n")
 
-    for result in ranked[: args.top]:
-        r = result.report
-        params = ", ".join(f"{k}={v}" for k, v in result.params.items())
-        print(
-            f"{result.score:>9.4f}  {r.return_pct:>8.2%}  {min(r.profit_factor, 99.99):>6.2f}  "
-            f"{r.max_drawdown_pct:>6.2%}  {r.total_trades:>6}  {params}"
-        )
+    if args.format == "markdown":
+        print("| score | return | PF | DD | trades | params |")
+        print("|---:|---:|---:|---:|---:|---|")
+        for result in shown:
+            r = result.report
+            params = ", ".join(f"`{k}={v}`" for k, v in result.params.items())
+            print(
+                f"| {result.score:.4f} | {r.return_pct:+.2%} | {min(r.profit_factor, 99.99):.2f} | "
+                f"{r.max_drawdown_pct:.2%} | {r.total_trades} | {params} |"
+            )
+    else:
+        header = f"{'score':>9}  {'return':>9}  {'PF':>6}  {'DD':>7}  {'trades':>6}  params"
+        print(header)
+        print("-" * len(header))
+        for result in shown:
+            r = result.report
+            params = ", ".join(f"{k}={v}" for k, v in result.params.items())
+            print(
+                f"{result.score:>9.4f}  {r.return_pct:>8.2%}  {min(r.profit_factor, 99.99):>6.2f}  "
+                f"{r.max_drawdown_pct:>6.2%}  {r.total_trades:>6}  {params}"
+            )
 
     print(
         "\nThese are IN-SAMPLE results: the same data chose and scored the "
@@ -129,7 +145,7 @@ def cmd_walkforward(args: argparse.Namespace) -> None:
         return
 
     print()
-    print(report.table())
+    print(report.markdown() if args.format == "markdown" else report.table())
     print(
         "\nIS score = in-sample score of the parameters chosen on the training "
         "slice.\nOOS = how those same parameters then did on the following, "
@@ -225,6 +241,8 @@ def main() -> None:
     backtest_p.add_argument("--config", required=True)
     backtest_p.add_argument("--data", required=True, help="CSV file with OHLCV candles")
     backtest_p.add_argument("--trades", action="store_true", help="Print every trade")
+    backtest_p.add_argument("--format", default="text", choices=["text", "markdown"],
+                            help="markdown reflows on narrow screens (used by CI summaries)")
     backtest_p.set_defaults(func=cmd_backtest)
 
     sweep_p = subparsers.add_parser("sweep", help="Grid-search parameters over the whole dataset (in-sample)")
@@ -236,6 +254,8 @@ def main() -> None:
     sweep_p.add_argument("--min-trades", type=int, default=20,
                          help="Discard parameter sets with fewer trades than this")
     sweep_p.add_argument("--top", type=int, default=15, help="How many rows to print")
+    sweep_p.add_argument("--format", default="text", choices=["text", "markdown"],
+                         help="markdown reflows on narrow screens (used by CI summaries)")
     sweep_p.set_defaults(func=cmd_sweep)
 
     wf_p = subparsers.add_parser("walkforward", help="Optimise and validate out-of-sample across folds")
@@ -246,6 +266,8 @@ def main() -> None:
     wf_p.add_argument("--metric", default="return_over_drawdown",
                       choices=["return_pct", "profit_factor", "return_over_drawdown"])
     wf_p.add_argument("--min-trades", type=int, default=10)
+    wf_p.add_argument("--format", default="text", choices=["text", "markdown"],
+                      help="markdown reflows on narrow screens (used by CI summaries)")
     wf_p.set_defaults(func=cmd_walkforward)
 
     check_p = subparsers.add_parser(

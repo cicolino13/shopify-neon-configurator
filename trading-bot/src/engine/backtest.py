@@ -45,6 +45,22 @@ class BacktestReport:
             f"({self.return_pct:+.2%})"
         )
 
+    def markdown(self) -> str:
+        """The same figures as a Markdown table, for CI summaries."""
+        profit_factor = "∞" if math.isinf(self.profit_factor) else f"{self.profit_factor:.2f}"
+        rows = [
+            ("Trades", f"{self.total_trades} (W {self.wins} / L {self.losses})"),
+            ("Win rate", f"{self.win_rate:.1%}"),
+            ("Profit factor", profit_factor),
+            ("Max drawdown", f"{self.max_drawdown_pct:.2%}"),
+            ("Commission paid", f"{self.total_commission:.2f}"),
+            ("Balance", f"{self.initial_balance:.2f} → {self.final_balance:.2f}"),
+            ("Return", f"**{self.return_pct:+.2%}**"),
+        ]
+        lines = ["| metric | value |", "|---|---|"]
+        lines += [f"| {name} | {value} |" for name, value in rows]
+        return "\n".join(lines)
+
 
 def prepare_candles(candles: pd.DataFrame, strategy: Strategy, atr_period: int) -> pd.DataFrame:
     """Attach the ATR the risk manager needs plus the strategy's own

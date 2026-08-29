@@ -1,0 +1,141 @@
+name: Trading bot backtest
+
+# Runs a backtest, sweep or walk-forward in the cloud so it can be started
+# from anywhere -- including the GitHub mobile app (Actions ▸ this workflow ▸
+# Run workflow). Results are written to the run summary, which the mobile app
+# renders, so no laptop is needed to read them.
+#
+# This only ever runs the BACKTEST engine on historical CSV data. It cannot
+# run live paper-trading: the MetaTrader5 package is Windows-only and drives a
+# locally installed MT5 terminal.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: What to run
+        type: choice
+        default: walkforward
+        options: [backtest, sweep, walkforward]
+      strategy:
+        description: Strategy
+        type: choice
+        default: ema_rsi_scalper
+        options: [ema_rsi_scalper, bollinger_reversion, session_breakout]
+      data:
+        description: CSV of OHLCV candles, relative to trading-bot/
+        default: data_samples/xauusd_m1_sample.csv
+      spread:
+        description: Spread in USD per ounce (read it from `main.py check`)
+        default: "0.30"
+      commission:
+        description: Round-turn commission per ounce
+        default: "0.0"
+      folds:
+        description: Walk-forward folds
+        default: "4"
+      metric:
+        description: Optimisation metric
+        type: choice
+        default: return_over_drawdown
+        options: [return_over_drawdown, return_pct, profit_factor]
+      min_trades:
+        description: Discard parameter sets with fewer trades than this
+        default: "10"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: trading-bot
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: trading-bot/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: python -m pytest -q
+
+      - name: Build config
+        run: |
+          python scripts/make_config.py \
+            --strategy "${{ inputs.strategy }}" \
+            --spread "${{ inputs.spread }}" \
+            --commission "${{ inputs.commission }}"
+
+      - name: Check the data file exists
+        run: |
+          if [ ! -f "${{ inputs.data }}" ]; then
+            echo "::error::Data file '${{ inputs.data }}' not found under trading-bot/."
+            echo "Commit your exported MT5 CSV to the repo, then pass its path here."
+            exit 1
+          fi
+          echo "rows: $(( $(wc -l < "${{ inputs.data }}") - 1 ))"
+
+      - name: Run
+        id: run
+        run: |
+          set -o pipefail
+          case "${{ inputs.mode }}" in
+            backtest)
+              python main.py backtest \
+                --config config.yaml --data "${{ inputs.data }}" \
+                --format markdown 2>/dev/null | tee output.md
+              ;;
+            sweep)
+              python main.py sweep \
+                --config config.yaml --data "${{ inputs.data }}" \
+                --grid "grids/${{ inputs.strategy }}.yaml" \
+                --metric "${{ inputs.metric }}" \
+                --min-trades "${{ inputs.min_trades }}" \
+                --format markdown 2>/dev/null | tee output.md
+              ;;
+            walkforward)
+              python main.py walkforward \
+                --config config.yaml --data "${{ inputs.data }}" \
+                --grid "grids/${{ inputs.strategy }}.yaml" \
+                --folds "${{ inputs.folds }}" \
+                --metric "${{ inputs.metric }}" \
+                --min-trades "${{ inputs.min_trades }}" \
+                --format markdown 2>/dev/null | tee output.md
+              ;;
+          esac
+
+      - name: Write summary
+        if: always()
+        run: |
+          {
+            echo "## ${{ inputs.mode }} — ${{ inputs.strategy }}"
+            echo ""
+            echo "| setting | value |"
+            echo "|---|---|"
+            echo "| data | \`${{ inputs.data }}\` |"
+            echo "| spread | ${{ inputs.spread }} |"
+            echo "| commission | ${{ inputs.commission }} |"
+            echo "| metric | ${{ inputs.metric }} |"
+            echo ""
+            cat output.md 2>/dev/null || echo "_No output — the run failed, see the logs._"
+            if [ "${{ inputs.data }}" = "data_samples/xauusd_m1_sample.csv" ]; then
+              echo ""
+              echo "> ⚠️ This ran on the **synthetic sample data** (a seeded random walk)."
+              echo "> It exercises the code but says nothing about any strategy."
+              echo "> Commit real MT5 history and pass its path to get a meaningful result."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.mode }}-${{ inputs.strategy }}-output
+          path: trading-bot/output.md
+          if-no-files-found: ignore

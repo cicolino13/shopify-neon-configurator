@@ -100,6 +100,34 @@ class WalkForwardReport:
         )
         return "\n".join(lines)
 
+    def markdown(self) -> str:
+        """The same table as Markdown. The fixed-width `table()` is 138
+        columns wide and scrolls sideways on a phone; a Markdown table
+        reflows, so this is what CI summaries use.
+        """
+        lines = [
+            "| fold | test window | params | IS score | OOS ret | OOS PF | trades |",
+            "|---:|---|---|---:|---:|---:|---:|",
+        ]
+
+        for fold in self.folds:
+            params = ", ".join(f"`{k}={v}`" for k, v in fold.best_params.items())
+            window = f"{fold.test_start:%Y-%m-%d %H:%M} → {fold.test_end:%Y-%m-%d %H:%M}"
+            pf = fold.test_report.profit_factor
+            pf_text = "∞" if math.isinf(pf) else f"{pf:.2f}"
+            lines.append(
+                f"| {fold.fold} | {window} | {params} | {fold.train_score:.4f} | "
+                f"{fold.test_report.return_pct:+.2%} | {pf_text} | "
+                f"{fold.test_report.total_trades} |"
+            )
+
+        lines.append("")
+        lines.append(
+            f"**Chained out-of-sample return: {self.out_of_sample_return:+.2%}** "
+            f"over {self.out_of_sample_trades} trades"
+        )
+        return "\n".join(lines)
+
 
 # --------------------------------------------------------------------------
 # scoring

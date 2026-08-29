@@ -169,6 +169,26 @@ nothing is ever sent to the broker. It acts on the last *closed* candle,
 never the bar still forming, so it cannot accidentally trade on a price that
 is not final.
 
+## Running from a phone (or any browser)
+
+Backtests, sweeps and walk-forward runs can be started from the **GitHub
+mobile app** — no laptop needed:
+
+> Actions ▸ *Trading bot backtest* ▸ Run workflow ▸ pick strategy/mode ▸ Run
+
+Results are written to the run summary as Markdown tables, which the mobile
+app renders natively. The workflow also runs the test suite first, so a run
+that reports numbers is a run whose code passed its tests.
+
+To use your own data, commit the exported MT5 CSV to the repo and pass its
+path in the `data` field; otherwise it falls back to the synthetic sample and
+labels the result accordingly.
+
+**Live paper-trading cannot be run this way.** The `MetaTrader5` package is
+Windows-only and drives a locally installed terminal, so it needs your own
+Windows machine or a Windows VPS — a CI runner or a phone cannot host it, and
+the MT5 mobile app runs neither Python nor Expert Advisors.
+
 ## Tests
 
 ```bash

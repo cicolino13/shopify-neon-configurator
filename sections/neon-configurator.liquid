@@ -24,7 +24,7 @@
       <div class="nlc-stage" id="nlcStage-{{ section.id }}">
         <div class="nlc-ambient" id="nlcAmbient-{{ section.id }}"></div>
         <div class="nlc-board">
-          <span class="nlc-preview" id="nlcPreview-{{ section.id }}" style="--nlc-color:#3fd7e0; --nlc-core-color:#b2eff3; --nlc-scale:1; --nlc-glow:1; font-family:'Syne', sans-serif;">NEONLIGHT</span>
+          <span class="nlc-preview" id="nlcPreview-{{ section.id }}" style="--nlc-color:#ffb340; --nlc-core-color:#ffe1b3; --nlc-scale:1; --nlc-glow:0.5; font-family:'Monoton', cursive;">NEONLIGHT</span>
           <img class="nlc-logo-preview" id="nlcLogoPreview-{{ section.id }}" alt="" hidden>
         </div>
       </div>
@@ -73,12 +73,12 @@
         <div class="nlc-field">
           <span class="nlc-label">Stil</span>
           <div class="nlc-styles" role="radiogroup" aria-label="Schriftstil wählen" id="nlcStyles-{{ section.id }}">
-            <button type="button" class="nlc-style is-active" data-font="'Syne', sans-serif" data-name="Modern" data-glow="1" role="radio" aria-checked="true" style="font-family:'Syne', sans-serif;">Modern</button>
+            <button type="button" class="nlc-style" data-font="'Syne', sans-serif" data-name="Modern" data-glow="1" role="radio" aria-checked="false" style="font-family:'Syne', sans-serif;">Modern</button>
             <button type="button" class="nlc-style" data-font="'Great Vibes', cursive" data-name="Elegant" data-glow="0.5" role="radio" aria-checked="false" style="font-family:'Great Vibes', cursive;">Elegant</button>
             <button type="button" class="nlc-style" data-font="'Dancing Script', cursive" data-name="Klassisch" data-glow="0.7" role="radio" aria-checked="false" style="font-family:'Dancing Script', cursive;">Klassisch</button>
             <button type="button" class="nlc-style" data-font="'Pacifico', cursive" data-name="Skript" data-glow="0.7" role="radio" aria-checked="false" style="font-family:'Pacifico', cursive;">Skript</button>
             <button type="button" class="nlc-style" data-font="'Baloo 2', sans-serif" data-name="Rund" data-glow="0.85" role="radio" aria-checked="false" style="font-family:'Baloo 2', sans-serif;">Rund</button>
-            <button type="button" class="nlc-style" data-font="'Monoton', cursive" data-name="Retro" data-glow="0.5" role="radio" aria-checked="false" style="font-family:'Monoton', cursive;">Retro</button>
+            <button type="button" class="nlc-style is-active" data-font="'Monoton', cursive" data-name="Retro" data-glow="0.5" role="radio" aria-checked="true" style="font-family:'Monoton', cursive;">Retro</button>
             <button type="button" class="nlc-style" data-font="'Bungee', cursive" data-name="Urban" data-glow="0.85" role="radio" aria-checked="false" style="font-family:'Bungee', cursive;">Urban</button>
           </div>
         </div>
@@ -86,10 +86,10 @@
         <div class="nlc-field">
           <div class="nlc-field-head">
             <span class="nlc-label">Farbe</span>
-            <span class="nlc-value" id="nlcColorName-{{ section.id }}">Cyan</span>
+            <span class="nlc-value" id="nlcColorName-{{ section.id }}">Bernstein</span>
           </div>
           <div class="nlc-swatches" role="radiogroup" aria-label="Neonfarbe wählen" id="nlcSwatches-{{ section.id }}">
-            <button type="button" class="nlc-swatch is-active" style="--sw:#3fd7e0" data-color="#3fd7e0" data-name="Cyan" role="radio" aria-checked="true"><span class="visually-hidden">Cyan</span></button>
+            <button type="button" class="nlc-swatch" style="--sw:#3fd7e0" data-color="#3fd7e0" data-name="Cyan" role="radio" aria-checked="false"><span class="visually-hidden">Cyan</span></button>
             <button type="button" class="nlc-swatch" style="--sw:#ff3ea5" data-color="#ff3ea5" data-name="Pink" role="radio" aria-checked="false"><span class="visually-hidden">Pink</span></button>
             <button type="button" class="nlc-swatch" style="--sw:#ffe9c7" data-color="#ffe9c7" data-name="Warmweiss" role="radio" aria-checked="false"><span class="visually-hidden">Warmweiss</span></button>
             <button type="button" class="nlc-swatch" style="--sw:#f5f7ff" data-color="#f5f7ff" data-name="Weiß" role="radio" aria-checked="false"><span class="visually-hidden">Weiß</span></button>
@@ -101,7 +101,7 @@
             <button type="button" class="nlc-swatch" style="--sw:#ffe14d" data-color="#ffe14d" data-name="Gelb" role="radio" aria-checked="false"><span class="visually-hidden">Gelb</span></button>
             <button type="button" class="nlc-swatch" style="--sw:#1de9b6" data-color="#1de9b6" data-name="Türkis" role="radio" aria-checked="false"><span class="visually-hidden">Türkis</span></button>
             <button type="button" class="nlc-swatch" style="--sw:#8fd9ff" data-color="#8fd9ff" data-name="Eisblau" role="radio" aria-checked="false"><span class="visually-hidden">Eisblau</span></button>
-            <button type="button" class="nlc-swatch" style="--sw:#ffb340" data-color="#ffb340" data-name="Bernstein" role="radio" aria-checked="false"><span class="visually-hidden">Bernstein</span></button>
+            <button type="button" class="nlc-swatch is-active" style="--sw:#ffb340" data-color="#ffb340" data-name="Bernstein" role="radio" aria-checked="true"><span class="visually-hidden">Bernstein</span></button>
             <button type="button" class="nlc-swatch" style="background:conic-gradient(from 0deg, #ff3b3b, #ffe14d, #39ff88, #3fd7e0, #3d7bff, #b968ff, #ff3ea5, #ff3b3b);" data-color="#ff3b3b" data-name="RGB" data-rgb="true" role="radio" aria-checked="false"><span class="visually-hidden">RGB Farbwechsel</span></button>
           </div>
         </div>
@@ -249,11 +249,11 @@
 
     var state = {
       text: textInput.value,
-      fontName: 'Modern',
-      font: "'Syne', sans-serif",
-      glow: 1,
-      colorName: 'Cyan',
-      color: '#3fd7e0',
+      fontName: 'Retro',
+      font: "'Monoton', cursive",
+      glow: 0.5,
+      colorName: 'Bernstein',
+      color: '#ffb340',
       isRgb: false,
       sizeLabel: 'M · ca. 50 cm Breite',
       scale: 1,

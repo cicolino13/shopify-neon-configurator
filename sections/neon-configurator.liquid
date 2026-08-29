@@ -63,6 +63,16 @@
         </label>
 
         <div class="nlc-field">
+          <span class="nlc-label">Logo (optional)</span>
+          <div class="nlc-upload" id="nlcUpload-{{ section.id }}">
+            <input type="file" id="nlcLogoInput-{{ section.id }}" class="visually-hidden" accept="image/png,image/jpeg,image/svg+xml,application/pdf">
+            <label for="nlcLogoInput-{{ section.id }}" class="nlc-upload-btn">Logo hochladen</label>
+            <img class="nlc-upload-thumb" id="nlcUploadThumb-{{ section.id }}" alt="" hidden>
+            <span class="nlc-upload-status" id="nlcUploadStatus-{{ section.id }}">Kein Logo ausgewählt</span>
+          </div>
+        </div>
+
+        <div class="nlc-field">
           <span class="nlc-label">Stil</span>
           <div class="nlc-styles" role="radiogroup" aria-label="Schriftstil wählen" id="nlcStyles-{{ section.id }}">
             <button type="button" class="nlc-style is-active" data-font="'Syne', sans-serif" data-name="Modern" data-glow="1" role="radio" aria-checked="true" style="font-family:'Syne', sans-serif;">Modern</button>
@@ -155,6 +165,7 @@
         {% assign nlc_form_id = 'NeonConfiguratorForm-' | append: section.id %}
         {% form 'contact', id: nlc_form_id, class: 'nlc-form' %}
           <input type="hidden" name="contact[Konfiguration]" id="nlcConfigSummary-{{ section.id }}" value="">
+          <input type="hidden" name="contact[Logo]" id="nlcLogoUrl-{{ section.id }}" value="">
           <input type="hidden" name="contact[Betreff]" value="Preisanfrage Neon-Konfigurator">
 
           {% if form.posted_successfully? %}
@@ -231,6 +242,11 @@
     var recap = section.querySelector('#nlcRecap-{{ section.id }}');
     var colorNameEl = section.querySelector('#nlcColorName-{{ section.id }}');
     var ambientEl = section.querySelector('#nlcAmbient-{{ section.id }}');
+    var logoInput = section.querySelector('#nlcLogoInput-{{ section.id }}');
+    var logoUploadStatus = section.querySelector('#nlcUploadStatus-{{ section.id }}');
+    var logoUploadThumb = section.querySelector('#nlcUploadThumb-{{ section.id }}');
+    var logoUrlField = section.querySelector('#nlcLogoUrl-{{ section.id }}');
+    var contactForm = section.querySelector('#{{ nlc_form_id }}');
 
     var state = {
       text: textInput.value,
@@ -247,8 +263,14 @@
       bg: 'https://cdn.shopify.com/s/files/1/0943/7203/6947/files/hecke-hintergrund.jpg',
       mount: 'Wandmontage mit Abstandshaltern',
       env: 'Innen',
-      accessory: 'Mit Fernbedienung & Dimmer'
+      accessory: 'Mit Fernbedienung & Dimmer',
+      logoUrl: '',
+      logoName: ''
     };
+
+    var CLOUDINARY_CLOUD_NAME = 'e7qq1hun';
+    var CLOUDINARY_UPLOAD_PRESET = 'Neonlight';
+    var logoUploading = false;
 
     function selectFromGroup(buttons, activeBtn) {
       buttons.forEach(function (b) {
@@ -366,12 +388,61 @@
           ' | Befestigung: ' + state.mount +
           ' | Einsatzort: ' + state.env +
           ' | Zubehör: ' + state.accessory +
+          (state.logoUrl ? ' | Logo: ' + state.logoUrl : '') +
           ' | Vorschau-Hintergrund: ' + state.bgName;
       }
 
-      if (recap) {
-        recap.textContent = '"' + text + '" · ' + state.fontName + ' · ' + state.colorName + ' · ' + state.sizeLabel.split(' ·')[0] + ' · ' + state.backing + ' · ' + state.mount + ' · ' + state.env + ' · ' + state.accessory;
+      if (logoUrlField) {
+        logoUrlField.value = state.logoUrl;
       }
+
+      if (recap) {
+        recap.textContent = '"' + text + '" · ' + state.fontName + ' · ' + state.colorName + ' · ' + state.sizeLabel.split(' ·')[0] + ' · ' + state.backing + ' · ' + state.mount + ' · ' + state.env + ' · ' + state.accessory + (state.logoUrl ? ' · Logo angehängt' : '');
+      }
+    }
+
+    function uploadLogo(file) {
+      if (logoUploadThumb && file.type.indexOf('image/') === 0) {
+        logoUploadThumb.src = URL.createObjectURL(file);
+        logoUploadThumb.hidden = false;
+      }
+      state.logoUrl = '';
+      state.logoName = file.name;
+      logoUploading = true;
+      if (logoUploadStatus) {
+        logoUploadStatus.textContent = 'Lädt hoch: ' + file.name + ' …';
+        logoUploadStatus.classList.remove('is-error', 'is-done');
+      }
+      render();
+
+      var formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+      fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD_NAME + '/auto/upload', {
+        method: 'POST',
+        body: formData
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (!data.secure_url) { throw new Error('no secure_url'); }
+          state.logoUrl = data.secure_url;
+          logoUploading = false;
+          if (logoUploadStatus) {
+            logoUploadStatus.textContent = 'Hochgeladen: ' + file.name;
+            logoUploadStatus.classList.add('is-done');
+          }
+          render();
+        })
+        .catch(function () {
+          state.logoUrl = '';
+          logoUploading = false;
+          if (logoUploadStatus) {
+            logoUploadStatus.textContent = 'Upload fehlgeschlagen – bitte erneut versuchen oder Logo per E-Mail nachreichen.';
+            logoUploadStatus.classList.add('is-error');
+          }
+          render();
+        });
     }
 
     var bgFadeTimer = null;
@@ -446,6 +517,25 @@
       state.text = textInput.value;
       render();
     });
+
+    if (logoInput) {
+      logoInput.addEventListener('change', function () {
+        var file = logoInput.files && logoInput.files[0];
+        if (file) { uploadLogo(file); }
+      });
+    }
+
+    if (contactForm) {
+      contactForm.addEventListener('submit', function (e) {
+        if (logoUploading) {
+          e.preventDefault();
+          if (logoUploadStatus) {
+            logoUploadStatus.textContent = 'Logo wird noch hochgeladen – bitte kurz warten und erneut senden.';
+            logoUploadStatus.classList.add('is-error');
+          }
+        }
+      });
+    }
 
     swatches.forEach(function (btn) {
       btn.addEventListener('click', function () {

@@ -17,10 +17,8 @@
         "announcement-bar-0": {
           "type": "announcement",
           "settings": {
-            "text": "Welcome to our store",
-            "text_alignment": "center",
-            "color_scheme": "scheme-1",
-            "link": ""
+            "text": "🇨🇭 Individuelle Neon-Signs aus der Schweiz – unverbindliches Angebot innerhalb von 24 Stunden",
+            "link": "#konfigurator"
           }
         }
       },

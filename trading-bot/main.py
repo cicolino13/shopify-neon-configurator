@@ -139,6 +139,68 @@ def cmd_walkforward(args: argparse.Namespace) -> None:
     )
 
 
+def _open_feed(config: BotConfig):
+    """Connect to MT5, turning the expected setup failures into a plain
+    message instead of a traceback -- these are the first thing a user hits
+    when their terminal or platform is not ready.
+    """
+    from src.data.mt5_feed import Mt5Feed
+
+    try:
+        return Mt5Feed(config.symbol, config.timeframe)
+    except RuntimeError as exc:
+        print(f"MT5 connection failed:\n  {exc}", file=sys.stderr)
+        raise SystemExit(1)
+
+
+def cmd_check(args: argparse.Namespace) -> None:
+    """Verify the MT5 connection and print the broker's real numbers.
+
+    Reads only -- it selects the symbol, fetches quotes and candles, and
+    places nothing.
+    """
+    config = BotConfig.from_yaml(args.config)
+    feed = _open_feed(config)
+
+    try:
+        account = feed.account_summary()
+        print("Account")
+        print(f"  login       : {account['login']}")
+        print(f"  server      : {account['server']}")
+        print(f"  type        : {account['trade_mode']}")
+        print(f"  balance     : {account['balance']:.2f} {account['currency']}")
+        print(f"  leverage    : 1:{account['leverage']}")
+
+        if account["trade_mode"] != "DEMO":
+            print(
+                "\n  !! This is NOT a demo account. Nothing in this project places an\n"
+                "     order, but do your testing on a demo account regardless."
+            )
+
+        info = feed.describe_symbol()
+        print(f"\nSymbol: {info['symbol']} ({info['description']})")
+        print(f"  bid / ask   : {info['bid']:.{info['digits']}f} / {info['ask']:.{info['digits']}f}")
+        print(f"  spread      : {info['spread_price']:.{info['digits']}f} "
+              f"({info['spread_points']} points)")
+        print(f"  contract    : {info['contract_size']:g} units per lot")
+        print(f"  lot size    : min {info['volume_min']:g}, max {info['volume_max']:g}, "
+              f"step {info['volume_step']:g}")
+
+        candles = feed.get_candles(5)
+        print(f"\nLast {len(candles)} {config.timeframe} candles (broker server time):")
+        print(candles.to_string())
+
+        print("\nSuggested config values from this broker, right now:")
+        print(f"  costs.spread: {info['spread_price']:.{info['digits']}f}")
+        print(
+            "\nSpreads widen around news and outside liquid hours, so re-run this at\n"
+            "different times and use the worse number -- an optimistic spread is the\n"
+            "easiest way to make a losing scalping strategy look profitable."
+        )
+    finally:
+        feed.shutdown()
+
+
 def cmd_paper(args: argparse.Namespace) -> None:
     # Imported lazily: this path needs the MetaTrader5 package + a running
     # MT5 terminal, which the backtest path does not.
@@ -146,7 +208,7 @@ def cmd_paper(args: argparse.Namespace) -> None:
 
     config = BotConfig.from_yaml(args.config)
     strategy = build_strategy(config.strategy.name, config.strategy.params)
-    run_live_paper(config, strategy)
+    run_live_paper(config, strategy, feed=_open_feed(config))
 
 
 def main() -> None:
@@ -185,6 +247,12 @@ def main() -> None:
                       choices=["return_pct", "profit_factor", "return_over_drawdown"])
     wf_p.add_argument("--min-trades", type=int, default=10)
     wf_p.set_defaults(func=cmd_walkforward)
+
+    check_p = subparsers.add_parser(
+        "check", help="Verify the MT5 connection and print the broker's real spread/contract specs"
+    )
+    check_p.add_argument("--config", required=True)
+    check_p.set_defaults(func=cmd_check)
 
     paper_p = subparsers.add_parser(
         "paper", help="Live paper-trading on MT5 real-time data (no real orders are placed)"

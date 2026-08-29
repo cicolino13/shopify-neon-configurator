@@ -78,6 +78,9 @@ python main.py sweep --config config.yaml --data XAUUSD_M1.csv \
 python main.py walkforward --config config.yaml --data XAUUSD_M1.csv \
     --grid grids/ema_rsi_scalper.yaml --folds 4
 
+# verify the MT5 connection and read the broker's real spread (no trading)
+python main.py check --config config.yaml
+
 # live paper-trading against MT5 real-time prices (no real orders)
 python main.py paper --config config.yaml
 ```
@@ -132,19 +135,39 @@ strategy has no edge no matter how good the `sweep` table looked.
 
 ## Live paper-trading
 
-Requires a running MT5 terminal (Windows or Wine) with the `MetaTrader5`
-Python package installed, and credentials in environment variables:
+**Runs on your machine only.** The `MetaTrader5` package is published for
+Windows only — there is no Linux build at all — and it drives a running MT5
+terminal via local IPC, so this cannot be run from a container or a remote
+session on your behalf.
+
+Credentials are read from environment variables and never written to
+`config.yaml` (which is git-ignored anyway). Keep it that way: don't paste
+account logins into a chat, a config file, or a commit. Use a **demo**
+account for all of this.
 
 ```bash
 pip install MetaTrader5
 export MT5_LOGIN=... MT5_PASSWORD=... MT5_SERVER=...
+
+# 1. confirm the connection and read the broker's real numbers (no trading)
+python main.py check --config config.yaml
+
+# 2. then run the paper session
 python main.py paper --config config.yaml
 ```
 
-This streams real MT5 candles and runs the strategy against them, but every
-"trade" only updates the in-memory `PaperBroker` balance — nothing is ever
-sent to the broker. It acts on the last *closed* candle, never the bar still
-forming, so it cannot accidentally trade on a price that is not final.
+`check` prints the account type (it warns loudly if the account is not a
+demo), the live bid/ask and **actual spread**, the contract size and lot
+limits, and the last few candles. Put the spread it reports into
+`costs.spread` — a guessed spread is the single easiest way to make a losing
+scalping strategy look profitable, and the contract size is what you need to
+convert the risk manager's units into lots later.
+
+The paper session streams real MT5 candles and runs the strategy against
+them, but every "trade" only updates the in-memory `PaperBroker` balance —
+nothing is ever sent to the broker. It acts on the last *closed* candle,
+never the bar still forming, so it cannot accidentally trade on a price that
+is not final.
 
 ## Tests
 
@@ -153,7 +176,8 @@ python -m pytest
 ```
 
 Covers the indicators, cost model, risk manager, paper broker fill/exit
-logic, all three strategies, the backtester and the optimiser.
+logic, all three strategies, the backtester, the optimiser and the live
+paper-trading loop (driven by a stub feed, so it runs without MT5).
 
 ## Configuration
 

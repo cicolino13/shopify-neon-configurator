@@ -61,5 +61,54 @@ class Mt5Feed:
         df = df.set_index("time")[["open", "high", "low", "close", "volume"]]
         return df
 
+    def describe_symbol(self) -> dict:
+        """Read the broker's live contract specification for this symbol.
+
+        This is where the numbers your config *should* contain come from: the
+        real spread rather than a guessed one, and the contract size needed to
+        turn the risk manager's abstract units into lots. Broker
+        specifications differ, so never assume -- read them.
+        """
+        info = self._mt5.symbol_info(self.symbol)
+        if info is None:
+            raise RuntimeError(f"MT5 symbol_info failed: {self._mt5.last_error()}")
+
+        tick = self._mt5.symbol_info_tick(self.symbol)
+        if tick is None:
+            raise RuntimeError(f"MT5 symbol_info_tick failed: {self._mt5.last_error()}")
+
+        return {
+            "symbol": self.symbol,
+            "description": info.description,
+            "bid": tick.bid,
+            "ask": tick.ask,
+            "spread_price": tick.ask - tick.bid,
+            "spread_points": info.spread,
+            "point": info.point,
+            "digits": info.digits,
+            "contract_size": info.trade_contract_size,
+            "volume_min": info.volume_min,
+            "volume_max": info.volume_max,
+            "volume_step": info.volume_step,
+            "trade_mode": info.trade_mode,
+        }
+
+    def account_summary(self) -> dict:
+        """Account details, used to confirm a *demo* account is connected."""
+        account = self._mt5.account_info()
+        if account is None:
+            raise RuntimeError(f"MT5 account_info failed: {self._mt5.last_error()}")
+
+        # trade_mode 0 = demo, 1 = contest, 2 = real
+        modes = {0: "DEMO", 1: "CONTEST", 2: "REAL"}
+        return {
+            "login": account.login,
+            "server": account.server,
+            "currency": account.currency,
+            "balance": account.balance,
+            "leverage": account.leverage,
+            "trade_mode": modes.get(account.trade_mode, f"unknown({account.trade_mode})"),
+        }
+
     def shutdown(self) -> None:
         self._mt5.shutdown()

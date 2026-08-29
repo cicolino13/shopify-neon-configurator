@@ -20,11 +20,19 @@ from .session import TradingSession
 logger = logging.getLogger(__name__)
 
 
-def run_live_paper(config: BotConfig, strategy: Strategy, stop_after_iterations: int | None = None) -> PaperBroker:
+def run_live_paper(
+    config: BotConfig,
+    strategy: Strategy,
+    stop_after_iterations: int | None = None,
+    feed=None,
+) -> PaperBroker:
     """Poll MT5 for new candles and run the paper-trading session forever
     (or `stop_after_iterations` polls, for testing).
+
+    `feed` may be supplied by the caller (an already-connected Mt5Feed, or a
+    stub in tests); otherwise one is created from the config.
     """
-    feed = Mt5Feed(config.symbol, config.timeframe)
+    feed = feed if feed is not None else Mt5Feed(config.symbol, config.timeframe)
     risk_manager = RiskManager.from_config(config.risk)
     broker = PaperBroker(config.risk.initial_balance, config.costs)
     session = TradingSession(strategy, risk_manager, broker)

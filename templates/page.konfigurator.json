@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 0
+      }
+    },
+    "neon_configurator": {
+      "type": "neon-configurator",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "neon_configurator"
+  ]
+}

@@ -25,6 +25,7 @@
         <div class="nlc-ambient" id="nlcAmbient-{{ section.id }}"></div>
         <div class="nlc-board">
           <span class="nlc-preview" id="nlcPreview-{{ section.id }}" style="--nlc-color:#3fd7e0; --nlc-core-color:#b2eff3; --nlc-scale:1; --nlc-glow:1; font-family:'Syne', sans-serif;">NEONLIGHT</span>
+          <img class="nlc-logo-preview" id="nlcLogoPreview-{{ section.id }}" alt="" hidden>
         </div>
       </div>
       <div class="nlc-scenes" role="radiogroup" aria-label="Hintergrund wählen" id="nlcScenes-{{ section.id }}">
@@ -246,6 +247,7 @@
     var logoUploadStatus = section.querySelector('#nlcUploadStatus-{{ section.id }}');
     var logoUploadThumb = section.querySelector('#nlcUploadThumb-{{ section.id }}');
     var logoUrlField = section.querySelector('#nlcLogoUrl-{{ section.id }}');
+    var logoPreviewImg = section.querySelector('#nlcLogoPreview-{{ section.id }}');
     var contactForm = section.querySelector('#{{ nlc_form_id }}');
 
     var state = {
@@ -265,7 +267,9 @@
       env: 'Innen',
       accessory: 'Mit Fernbedienung & Dimmer',
       logoUrl: '',
-      logoName: ''
+      logoName: '',
+      logoBaseFilter: '',
+      hasLogoImage: false
     };
 
     var CLOUDINARY_CLOUD_NAME = 'e7qq1hun';
@@ -335,9 +339,12 @@
       if (!state.isRgb) { rgbRafId = null; return; }
       if (rgbStartTime === null) { rgbStartTime = timestamp; }
       var elapsed = (timestamp - rgbStartTime) % RGB_CYCLE_MS;
-      var filterValue = 'hue-rotate(' + ((elapsed / RGB_CYCLE_MS) * 360) + 'deg)';
-      preview.style.filter = filterValue;
-      if (ambientEl) { ambientEl.style.filter = filterValue; }
+      var hueFilter = 'hue-rotate(' + ((elapsed / RGB_CYCLE_MS) * 360) + 'deg)';
+      preview.style.filter = hueFilter;
+      if (ambientEl) { ambientEl.style.filter = hueFilter; }
+      if (logoPreviewImg && state.hasLogoImage) {
+        logoPreviewImg.style.filter = state.logoBaseFilter + ' ' + hueFilter;
+      }
       rgbRafId = window.requestAnimationFrame(stepRgbCycle);
     }
 
@@ -354,6 +361,7 @@
       }
       preview.style.filter = '';
       if (ambientEl) { ambientEl.style.filter = ''; }
+      if (logoPreviewImg) { logoPreviewImg.style.filter = state.logoBaseFilter; }
     }
 
     function render() {
@@ -365,6 +373,18 @@
       preview.style.setProperty('--nlc-glow', state.glow);
       preview.style.fontFamily = state.font;
       preview.classList.toggle('is-rgb', state.isRgb);
+
+      state.logoBaseFilter =
+        'drop-shadow(0 0 2px ' + mixWithWhite(state.color, 0.6) + ')' +
+        ' drop-shadow(0 0 6px ' + state.color + ')' +
+        ' drop-shadow(0 0 14px ' + state.color + ')';
+      if (logoPreviewImg) {
+        logoPreviewImg.style.setProperty('--nlc-scale', state.scale);
+        if (!state.isRgb) { logoPreviewImg.style.filter = state.logoBaseFilter; }
+        logoPreviewImg.classList.toggle('is-rgb', state.isRgb);
+        logoPreviewImg.hidden = !state.hasLogoImage;
+      }
+      preview.hidden = state.hasLogoImage;
       if (ambientEl) {
         ambientEl.classList.toggle('is-rgb', state.isRgb);
       }
@@ -402,9 +422,17 @@
     }
 
     function uploadLogo(file) {
-      if (logoUploadThumb && file.type.indexOf('image/') === 0) {
-        logoUploadThumb.src = URL.createObjectURL(file);
-        logoUploadThumb.hidden = false;
+      var isImage = file.type.indexOf('image/') === 0;
+      if (isImage) {
+        var objectUrl = URL.createObjectURL(file);
+        if (logoUploadThumb) {
+          logoUploadThumb.src = objectUrl;
+          logoUploadThumb.hidden = false;
+        }
+        if (logoPreviewImg) {
+          logoPreviewImg.src = objectUrl;
+        }
+        state.hasLogoImage = true;
       }
       state.logoUrl = '';
       state.logoName = file.name;

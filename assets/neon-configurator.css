@@ -98,6 +98,17 @@
   94%{ opacity:1; }
 }
 
+.nlc-logo-preview{
+  max-width:min(220px, 70%);
+  max-height:220px;
+  object-fit:contain;
+  transform:scale(var(--nlc-scale, 1));
+  transition:transform 0.2s ease;
+}
+@media (prefers-reduced-motion: no-preference){
+  .nlc-logo-preview{ animation: nlc-flicker 5s infinite; }
+}
+
 .nlc-controls{
   padding:1.8rem 1.5rem;
   display:flex;flex-direction:column;gap:1.05rem;

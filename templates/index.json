@@ -172,9 +172,18 @@
             "link_label": "",
             "link": ""
           }
+        },
+        "step4": {
+          "type": "column",
+          "settings": {
+            "title": "4. Montage",
+            "text": "<p>Einfache Selbstmontage mit unserer Schritt-für-Schritt-Anleitung.</p>",
+            "link_label": "Montageanleitung ansehen",
+            "link": "shopify://pages/montageanleitung"
+          }
         }
       },
-      "block_order": ["step1", "step2", "step3"],
+      "block_order": ["step1", "step2", "step3", "step4"],
       "settings": {
         "title": "So läuft eine Bestellung ab",
         "heading_size": "h2",
@@ -182,7 +191,7 @@
         "image_ratio": "adapt",
         "button_label": "",
         "button_link": "",
-        "columns_desktop": 3,
+        "columns_desktop": 4,
         "column_alignment": "left",
         "background_style": "none",
         "color_scheme": "scheme-1",

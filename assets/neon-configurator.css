@@ -99,6 +99,8 @@
 }
 
 .nlc-logo-preview{
+  display:block;
+  margin:0 auto;
   max-width:min(220px, 70%);
   max-height:220px;
   object-fit:contain;

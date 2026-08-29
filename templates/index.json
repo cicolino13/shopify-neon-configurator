@@ -168,7 +168,7 @@
           "type": "column",
           "settings": {
             "title": "3. Produktion & Lieferung",
-            "text": "<p>Fertigung und Versand in die Schweiz oder EU.</p>",
+            "text": "<p>Fertigung und Versand innerhalb der Schweiz.</p>",
             "link_label": "",
             "link": ""
           }

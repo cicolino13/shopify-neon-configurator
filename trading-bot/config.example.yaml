@@ -1,0 +1,26 @@
+# Copy to config.yaml and adjust. All values below are examples, not advice.
+
+symbol: XAUUSD
+timeframe: M1          # MT5 timeframe used for live paper-trading
+
+strategy:
+  ema_fast: 9
+  ema_slow: 21
+  rsi_period: 14
+  rsi_overbought: 70
+  rsi_oversold: 30
+  atr_period: 14
+
+risk:
+  initial_balance: 10000.0
+  risk_per_trade_pct: 1.0      # % of balance risked per trade (via stop distance)
+  sl_atr_mult: 1.5             # stop-loss distance = ATR * sl_atr_mult
+  tp_atr_mult: 2.5             # take-profit distance = ATR * tp_atr_mult
+  max_trades_per_day: 10
+  max_daily_loss_pct: 3.0      # stop opening new trades once daily loss exceeds this % of balance
+
+# Live paper-trading only: credentials read from environment variables
+# (MT5_LOGIN, MT5_PASSWORD, MT5_SERVER), never store them in this file.
+live:
+  poll_seconds: 5
+  history_bars: 300

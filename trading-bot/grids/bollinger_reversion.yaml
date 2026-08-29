@@ -1,0 +1,4 @@
+period: [14, 20, 30]
+num_std: [1.5, 2.0, 2.5]
+risk.sl_atr_mult: [1.0, 1.5, 2.0]
+risk.tp_atr_mult: [1.5, 2.5]

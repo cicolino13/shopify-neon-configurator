@@ -15,19 +15,33 @@ money.
 
 ## What's here
 
-- `src/strategy/ema_rsi_scalper.py` — example fast EMA-crossover + RSI-filter
-  strategy for short timeframes (default M1).
+**Strategies** (`src/strategy/`) — each one only decides *entries*; stops and
+targets always come from the risk manager, so all of them get the same risk
+controls:
+
+| name | idea | works best when |
+|---|---|---|
+| `ema_rsi_scalper` | fast/slow EMA crossover with an RSI filter | price trends |
+| `bollinger_reversion` | buy/sell when price snaps back inside a Bollinger band | price ranges |
+| `session_breakout` | break of the opening range after the London/NY open | volatility clusters at the open |
+
+**Everything else:**
+
+- `src/broker/costs.py` — spread, commission and slippage. Candles are bid
+  prices, so a BUY enters at the ask and a SELL exits at the ask, and every
+  round trip pays the spread. **This is the part that decides whether a
+  scalping strategy is real**; see "Why costs matter" below.
+- `src/broker/paper_broker.py` — simulates fills and exits with a virtual
+  balance. Used by *both* the backtester and live paper-trading, so a
+  strategy behaves identically in both.
 - `src/risk/risk_manager.py` — position sizing from a fixed % risk per trade,
   ATR-based stop-loss/take-profit distances, max trades/day and max daily
   loss circuit breakers.
-- `src/broker/paper_broker.py` — simulates fills and exits against candle
-  data with a virtual balance. Used by *both* the backtester and live
-  paper-trading, so a strategy behaves identically in both.
-- `src/data/csv_feed.py` — loads historical OHLCV candles for backtesting.
-- `src/data/mt5_feed.py` — reads real-time candles from a running MT5
-  terminal (read-only: market data only, never order placement).
 - `src/engine/backtest.py` — bar-by-bar backtest producing a trade log,
   equity curve, win rate, profit factor and max drawdown.
+- `src/engine/optimize.py` — parameter grid search and **walk-forward
+  validation** (optimise on one slice of history, measure on the next,
+  unseen one).
 - `src/engine/live_paper.py` — polls MT5 for new candles and runs the same
   session logic in real time, still only via the paper broker.
 
@@ -40,43 +54,97 @@ pip install -r requirements.txt
 cp config.example.yaml config.yaml   # then adjust to taste
 ```
 
-## Backtesting (works anywhere, no MT5 needed)
+## Getting real data
 
-A small synthetic sample dataset is included at
-`data_samples/xauusd_m1_sample.csv` (seeded random walk, **not real market
-data** — only useful for exercising the code end-to-end). Regenerate it with:
+A small synthetic sample lives at `data_samples/xauusd_m1_sample.csv`
+(seeded random walk, **not real market data** — only useful for exercising
+the code; regenerate with `python scripts/generate_sample_data.py`).
 
-```bash
-python scripts/generate_sample_data.py
-```
+For anything meaningful, export real XAU/USD history from MT5
+(`View ▸ Symbols ▸ XAUUSD ▸ Bars`, or `Save As` from a chart) in the same
+`time,open,high,low,close,volume` layout.
 
-For a real backtest, export actual XAU/USD M1 history from your MT5
-terminal (Tools ▸ History Center ▸ Export) or another data vendor, in the
-same `time,open,high,low,close,volume` CSV layout, then run:
+## Commands
 
 ```bash
-python main.py backtest --config config.yaml --data path/to/your_data.csv --trades
+# single backtest
+python main.py backtest --config config.yaml --data XAUUSD_M1.csv --trades
+
+# grid search (in-sample -- optimistic by construction)
+python main.py sweep --config config.yaml --data XAUUSD_M1.csv \
+    --grid grids/ema_rsi_scalper.yaml
+
+# grid search validated on data it never optimised on -- the honest one
+python main.py walkforward --config config.yaml --data XAUUSD_M1.csv \
+    --grid grids/ema_rsi_scalper.yaml --folds 4
+
+# live paper-trading against MT5 real-time prices (no real orders)
+python main.py paper --config config.yaml
 ```
 
-This prints trade count, win rate, profit factor, max drawdown and the
-balance change — plus every individual trade with `--trades`.
+Switch strategy by editing the `strategy.name` and `strategy.params` block in
+`config.yaml`; grids for each strategy live in `grids/`.
 
-## Live paper-trading (real prices, simulated orders)
+## Why costs matter
+
+Scalping profits are small per trade, so transaction costs are not a detail —
+they are usually the whole result. Running the bundled sample data through
+increasing cost assumptions:
+
+| costs | profit factor | return |
+|---|---|---|
+| none | 0.87 | −2.18% |
+| spread 0.30 | 0.87 | −2.18% |
+| spread 0.30 + commission + slippage | 0.84 | −2.90% |
+| spread 1.50 (news-widened) | 0.20 | −12.65% |
+
+Note how the spread does *not* change the profit or loss of any individual
+trade: stops and targets are set relative to the price you actually filled
+at, so the spread instead makes targets harder to reach and stops easier to
+hit. It shows up as a worse *distribution* of outcomes, which makes it easy
+to underestimate — until the spread widens, as in the last row. Take the
+real numbers from your broker's contract specification.
+
+## Why walk-forward matters
+
+`sweep` searches the whole dataset and reports the best parameters it found.
+Those numbers are always flattering: the same data both chose and graded
+them. With enough combinations something always looks brilliant in
+hindsight — that is curve fitting, not an edge.
+
+`walkforward` cuts history into chunks, optimises on one and then measures
+those exact parameters on the *next*, unseen chunk. On the synthetic sample
+data (a pure random walk, where no edge can possibly exist) it correctly
+exposes the illusion:
+
+```
+fold   IS score   OOS ret   OOS PF   trades
+   1     0.9032    -4.03%     0.55       14
+   2     5.2166    -5.88%     0.00        6
+   3     1.1254     5.01%     2.25       10
+   4     2.6442    -5.89%     0.00        6
+Chained out-of-sample return: -10.74% over 36 trades
+```
+
+Strong in-sample scores, out-of-sample returns scattered around zero and
+negative overall. If your real data produces a picture like this, the
+strategy has no edge no matter how good the `sweep` table looked.
+
+## Live paper-trading
 
 Requires a running MT5 terminal (Windows or Wine) with the `MetaTrader5`
 Python package installed, and credentials in environment variables:
 
 ```bash
 pip install MetaTrader5
-export MT5_LOGIN=...
-export MT5_PASSWORD=...
-export MT5_SERVER=...
+export MT5_LOGIN=... MT5_PASSWORD=... MT5_SERVER=...
 python main.py paper --config config.yaml
 ```
 
 This streams real MT5 candles and runs the strategy against them, but every
 "trade" only updates the in-memory `PaperBroker` balance — nothing is ever
-sent to the broker.
+sent to the broker. It acts on the last *closed* candle, never the bar still
+forming, so it cannot accidentally trade on a price that is not final.
 
 ## Tests
 
@@ -84,16 +152,15 @@ sent to the broker.
 python -m pytest
 ```
 
-Covers the indicators, risk manager, paper broker fill/exit logic, and a
-full backtest run.
+Covers the indicators, cost model, risk manager, paper broker fill/exit
+logic, all three strategies, the backtester and the optimiser.
 
-## Tuning the strategy
+## Configuration
 
-All strategy and risk parameters live in `config.yaml`:
+All strategy, cost and risk parameters live in `config.yaml`:
 
-- `strategy.ema_fast` / `ema_slow` — crossover periods (defaults 9/21).
-- `strategy.rsi_period`, `rsi_overbought`, `rsi_oversold` — entry filter.
-- `strategy.atr_period` — volatility measure used for stop/target distance.
+- `strategy.name` / `strategy.params` — which strategy and its settings.
+- `costs.spread`, `commission_per_unit`, `slippage` — USD per ounce.
 - `risk.risk_per_trade_pct` — % of balance risked per trade.
 - `risk.sl_atr_mult` / `tp_atr_mult` — stop-loss / take-profit distance as a
   multiple of ATR.

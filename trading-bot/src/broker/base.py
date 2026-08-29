@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Literal
 
 Direction = Literal["BUY", "SELL"]
+ExitReason = Literal["stop_loss", "take_profit", "end_of_data"]
 
 
 @dataclass
@@ -26,4 +27,5 @@ class Trade:
     opened_at: datetime
     closed_at: datetime
     pnl: float
-    exit_reason: Literal["stop_loss", "take_profit"]
+    exit_reason: ExitReason
+    commission: float = 0.0

@@ -1,0 +1,6 @@
+# Remember: session_start is in your BROKER'S server time, not UTC.
+session_start: ["08:00", "13:30"]
+range_minutes: [15, 30, 60]
+trade_window_minutes: [180, 360]
+risk.sl_atr_mult: [1.0, 1.5, 2.0]
+risk.tp_atr_mult: [2.0, 3.0]

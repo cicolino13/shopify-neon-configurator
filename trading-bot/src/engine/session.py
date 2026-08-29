@@ -43,21 +43,26 @@ class TradingSession:
         if signal.action not in ("BUY", "SELL"):
             return
 
-        entry_price = candle["close"]
-        atr_value = history["atr"].iloc[-1]
+        atr_value = candle["atr"]
         if pd.isna(atr_value) or atr_value <= 0:
             return
 
-        stop_loss, take_profit = self.risk_manager.compute_stop_take(signal.action, entry_price, atr_value)
-        size = self.risk_manager.position_size(self.broker.balance, entry_price, stop_loss)
+        # Size and stops are derived from the price actually filled at
+        # (including spread and slippage), not from the raw bid quote, so
+        # the risked amount stays correct once costs are accounted for.
+        bid_price = candle["close"]
+        entry_fill = self.broker.costs.entry_fill(signal.action, bid_price)
+
+        stop_loss, take_profit = self.risk_manager.compute_stop_take(signal.action, entry_fill, atr_value)
+        size = self.risk_manager.position_size(self.broker.balance, entry_fill, stop_loss)
         if size <= 0:
             return
 
-        self.broker.open_position(signal.action, size, entry_price, stop_loss, take_profit, candle.name)
+        self.broker.open_position(signal.action, size, bid_price, stop_loss, take_profit, candle.name)
         logger.info(
             "opened %s: entry=%.3f sl=%.3f tp=%.3f size=%.4f (%s)",
             signal.action,
-            entry_price,
+            entry_fill,
             stop_loss,
             take_profit,
             size,

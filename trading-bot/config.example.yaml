@@ -4,15 +4,35 @@ symbol: XAUUSD
 timeframe: M1          # MT5 timeframe used for live paper-trading
 
 strategy:
-  ema_fast: 9
-  ema_slow: 21
-  rsi_period: 14
-  rsi_overbought: 70
-  rsi_oversold: 30
-  atr_period: 14
+  # One of: ema_rsi_scalper, bollinger_reversion, session_breakout
+  name: ema_rsi_scalper
+  params:
+    ema_fast: 9
+    ema_slow: 21
+    rsi_period: 14
+    rsi_overbought: 70
+    rsi_oversold: 30
+
+  # bollinger_reversion:
+  #   period: 20
+  #   num_std: 2.0
+  #
+  # session_breakout (times are in your BROKER'S server time, not UTC):
+  #   session_start: "13:30"
+  #   range_minutes: 30
+  #   trade_window_minutes: 240
+
+# Transaction costs. These dominate short-timeframe results -- take the real
+# numbers from your broker's contract specification rather than these
+# placeholders. Units are USD per ounce for XAUUSD.
+costs:
+  spread: 0.30               # typical XAUUSD spread; widens a lot around news
+  commission_per_unit: 0.0   # per ounce, round turn (per-lot fee / 100)
+  slippage: 0.02             # adverse slip on market and stop orders
 
 risk:
   initial_balance: 10000.0
+  atr_period: 14
   risk_per_trade_pct: 1.0      # % of balance risked per trade (via stop distance)
   sl_atr_mult: 1.5             # stop-loss distance = ATR * sl_atr_mult
   tp_atr_mult: 2.5             # take-profit distance = ATR * tp_atr_mult

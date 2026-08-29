@@ -1,5 +1,5 @@
-"""Technical indicators used by the scalping strategy, computed with pandas only
-(no external TA library) so the project has minimal dependencies.
+"""Technical indicators, computed with pandas only (no external TA library)
+so the project has minimal dependencies.
 """
 from __future__ import annotations
 
@@ -9,6 +9,10 @@ import pandas as pd
 
 def ema(series: pd.Series, period: int) -> pd.Series:
     return series.ewm(span=period, adjust=False).mean()
+
+
+def sma(series: pd.Series, period: int) -> pd.Series:
+    return series.rolling(period).mean()
 
 
 def rsi(series: pd.Series, period: int) -> pd.Series:
@@ -44,17 +48,18 @@ def atr(df: pd.DataFrame, period: int) -> pd.Series:
     return tr.ewm(alpha=1 / period, adjust=False).mean()
 
 
-def add_indicators(
-    df: pd.DataFrame,
-    ema_fast: int,
-    ema_slow: int,
-    rsi_period: int,
-    atr_period: int,
-) -> pd.DataFrame:
-    """Return a copy of df with ema_fast, ema_slow, rsi and atr columns added."""
+def bollinger(series: pd.Series, period: int, num_std: float) -> tuple[pd.Series, pd.Series, pd.Series]:
+    """Return (middle, upper, lower) Bollinger bands."""
+    mid = sma(series, period)
+    # ddof=0: population std, the convention used for Bollinger bands
+    std = series.rolling(period).std(ddof=0)
+    return mid, mid + num_std * std, mid - num_std * std
+
+
+def add_atr(df: pd.DataFrame, period: int) -> pd.DataFrame:
+    """Attach the ATR column the risk manager needs for stop/target sizing.
+    Applied by the engine for every strategy.
+    """
     out = df.copy()
-    out["ema_fast"] = ema(out["close"], ema_fast)
-    out["ema_slow"] = ema(out["close"], ema_slow)
-    out["rsi"] = rsi(out["close"], rsi_period)
-    out["atr"] = atr(out, atr_period)
+    out["atr"] = atr(out, period)
     return out

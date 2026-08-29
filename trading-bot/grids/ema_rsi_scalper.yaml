@@ -1,0 +1,13 @@
+# Parameter grid for `main.py sweep` / `main.py walkforward`.
+# Keys are strategy parameter names; keys prefixed `risk.` override risk
+# settings. Every combination is backtested, so the grid size grows fast --
+# this one is 3 * 3 * 3 * 2 = 54 combinations.
+#
+# Keep grids small. A larger grid does not find a better strategy, it finds a
+# better-looking fit to the past, which is why the walk-forward out-of-sample
+# column matters far more than the best in-sample number.
+
+ema_fast: [5, 9, 13]
+ema_slow: [21, 34, 55]
+risk.sl_atr_mult: [1.0, 1.5, 2.0]
+risk.tp_atr_mult: [2.0, 3.0]

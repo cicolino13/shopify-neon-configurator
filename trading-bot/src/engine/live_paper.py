@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from ..broker.paper_broker import PaperBroker
 from ..config import BotConfig
 from ..data.mt5_feed import Mt5Feed
-from ..indicators import add_indicators
+from ..engine.backtest import prepare_candles
 from ..risk.risk_manager import RiskManager
 from ..strategy.base import Strategy
 from .session import TradingSession
@@ -26,7 +26,7 @@ def run_live_paper(config: BotConfig, strategy: Strategy, stop_after_iterations:
     """
     feed = Mt5Feed(config.symbol, config.timeframe)
     risk_manager = RiskManager.from_config(config.risk)
-    broker = PaperBroker(config.risk.initial_balance)
+    broker = PaperBroker(config.risk.initial_balance, config.costs)
     session = TradingSession(strategy, risk_manager, broker)
 
     logger.warning(
@@ -41,25 +41,23 @@ def run_live_paper(config: BotConfig, strategy: Strategy, stop_after_iterations:
 
     try:
         while stop_after_iterations is None or iterations < stop_after_iterations:
-            df = feed.get_candles(config.live.history_bars)
-            df = add_indicators(
-                df,
-                config.strategy.ema_fast,
-                config.strategy.ema_slow,
-                config.strategy.rsi_period,
-                config.strategy.atr_period,
-            )
+            df = prepare_candles(feed.get_candles(config.live.history_bars), strategy, config.risk.atr_period)
 
-            latest_candle = df.iloc[-1]
-            if last_seen_time is None or latest_candle.name > last_seen_time:
-                session.process_candle(latest_candle, df)
-                last_seen_time = latest_candle.name
-                logger.info(
-                    "[%s] equity=%.2f open_position=%s",
-                    datetime.now(timezone.utc).isoformat(),
-                    broker.equity(latest_candle["close"]),
-                    broker.position is not None,
-                )
+            # Act on the last *closed* candle: the most recent bar from MT5 is
+            # still forming, and trading on it would use a close price that is
+            # not final -- a subtle way to make a backtest look better than
+            # reality ever will.
+            if len(df) >= 2:
+                closed_candle = df.iloc[-2]
+                if last_seen_time is None or closed_candle.name > last_seen_time:
+                    session.process_candle(closed_candle, df.iloc[:-1])
+                    last_seen_time = closed_candle.name
+                    logger.info(
+                        "[%s] equity=%.2f open_position=%s",
+                        datetime.now(timezone.utc).isoformat(),
+                        broker.equity(closed_candle["close"]),
+                        broker.position is not None,
+                    )
 
             iterations += 1
             time.sleep(config.live.poll_seconds)

@@ -66,8 +66,8 @@
           "settings": {
             "title": "2 Jahre Garantie",
             "text": "<p>Auf Material und Verarbeitung.</p>",
-            "link_label": "",
-            "link": ""
+            "link_label": "Details zur Garantie",
+            "link": "shopify://pages/garantie"
           }
         }
       },

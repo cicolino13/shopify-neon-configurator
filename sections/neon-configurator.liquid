@@ -232,6 +232,7 @@
     var sizes = section.querySelectorAll('#nlcSizes-{{ section.id }} .nlc-size');
     var customSizeWrap = section.querySelector('#nlcCustomSize-{{ section.id }}');
     var customWidthInput = section.querySelector('#nlcCustomWidth-{{ section.id }}');
+    var customSizeBtn = section.querySelector('#nlcSizes-{{ section.id }} [data-custom-size="true"]');
     var backings = section.querySelectorAll('#nlcBackings-{{ section.id }} .nlc-size');
     var scenes = section.querySelectorAll('#nlcScenes-{{ section.id }} .nlc-scene');
     var mounts = section.querySelectorAll('#nlcMounts-{{ section.id }} .nlc-size');
@@ -644,6 +645,9 @@
 
     if (customWidthInput) {
       customWidthInput.addEventListener('input', function () {
+        if (customSizeBtn && !customSizeBtn.classList.contains('is-active')) {
+          selectFromGroup(sizes, customSizeBtn);
+        }
         applyCustomSize();
         render();
       });

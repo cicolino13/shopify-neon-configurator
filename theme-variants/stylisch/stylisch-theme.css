@@ -1,0 +1,17 @@
+/* Stylisch — overrides the shared Dawn/Neonlight CSS variables site-wide. */
+
+:root,
+html {
+  --font-heading-family: 'Anton', sans-serif;
+  --font-body-family: 'Work Sans', sans-serif;
+}
+
+.nl-logo__letter,
+.nl-logo__word {
+  font-family: 'Anton', sans-serif;
+}
+
+.nl-logo__bar {
+  background: #d4ff3d;
+  box-shadow: none;
+}

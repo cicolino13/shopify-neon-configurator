@@ -1,0 +1,17 @@
+/* Futuristisch — overrides the shared Dawn/Neonlight CSS variables site-wide. */
+
+:root,
+html {
+  --font-heading-family: 'Orbitron', sans-serif;
+  --font-body-family: 'IBM Plex Mono', monospace;
+}
+
+.nl-logo__letter,
+.nl-logo__word {
+  font-family: 'Orbitron', sans-serif;
+}
+
+.nl-logo__bar {
+  background: #3fe0e6;
+  box-shadow: 0 0 3px #3fe0e6, 0 0 9px #3fe0e6;
+}

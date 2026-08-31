@@ -1,0 +1,159 @@
+{%- style -%}
+  #shopify-section-{{ section.id }} .hs-hero {
+    position: relative;
+    overflow: hidden;
+    background: #0B0B0F;
+    color: #FFFFFF;
+    min-height: 560px;
+  }
+  #shopify-section-{{ section.id }} .hs-hero__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+  #shopify-section-{{ section.id }} .hs-hero__scrim {
+    position: absolute;
+    inset: 0;
+    background: rgba(11,11,15,0.45);
+    z-index: 1;
+  }
+  /* Blickdicht: volle Deckkraft, kein Foto-Durchschein im Pink-Bereich */
+  #shopify-section-{{ section.id }} .hs-hero__block {
+    position: absolute;
+    inset: 0;
+    background: #FF2E8A;
+    opacity: 1;
+    clip-path: polygon(58% 0, 100% 0, 100% 100%, 40% 100%);
+    z-index: 2;
+  }
+  #shopify-section-{{ section.id }} .hs-hero__inner {
+    position: relative;
+    z-index: 3;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  #shopify-section-{{ section.id }} .hs-content {
+    padding: 90px 40px 96px;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  #shopify-section-{{ section.id }} .hs-badge {
+    display: inline-block;
+    width: fit-content;
+    background: #D4FF3D;
+    color: #0B0B0F;
+    padding: 7px 16px;
+    border-radius: 999px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    letter-spacing: 0.06em;
+  }
+  #shopify-section-{{ section.id }} .hs-heading {
+    margin: 0;
+    font-family: 'Anton', sans-serif;
+    text-transform: uppercase;
+    font-size: clamp(3.2rem, 6vw, 6.4rem);
+    line-height: 0.95;
+    color: #0B0B0F;
+    text-wrap: pretty;
+  }
+  #shopify-section-{{ section.id }} .hs-sub {
+    margin: 0;
+    font-size: 1.7rem;
+    line-height: 1.5;
+    color: #0B0B0F;
+    font-weight: 500;
+    max-width: 46ch;
+  }
+  #shopify-section-{{ section.id }} .hs-cta {
+    display: inline-block;
+    width: fit-content;
+    margin-top: 8px;
+    background: #0B0B0F;
+    color: #D4FF3D;
+    padding: 16px 34px;
+    border-radius: 999px;
+    font-family: 'Anton', sans-serif;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    text-decoration: none;
+  }
+  #shopify-section-{{ section.id }} .hs-cta:hover { opacity: 0.85; }
+  #shopify-section-{{ section.id }} .hs-badge-circle {
+    position: absolute;
+    right: 70px;
+    bottom: 60px;
+    z-index: 3;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: #0B0B0F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(-12deg);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+  }
+  #shopify-section-{{ section.id }} .hs-badge-circle span {
+    font-family: 'Anton', sans-serif;
+    color: #D4FF3D;
+    font-size: 1.3rem;
+    letter-spacing: 0.04em;
+    text-align: center;
+    line-height: 1.25;
+    text-transform: uppercase;
+  }
+
+  @media screen and (max-width: 749px) {
+    /* Diagonale wirkt im Hochformat verzerrt: mobil volle, blickdichte Fläche statt Schnitt */
+    #shopify-section-{{ section.id }} .hs-hero__block {
+      clip-path: none;
+    }
+    #shopify-section-{{ section.id }} .hs-content { padding: 32px 22px 44px; }
+    #shopify-section-{{ section.id }} .hs-badge-circle { display: none; }
+  }
+{%- endstyle -%}
+
+<div class="hs-hero">
+  {%- if section.settings.image != blank -%}
+    {{ section.settings.image | image_url: width: 1600 | image_tag: class: 'hs-hero__img', loading: 'eager', widths: '750, 1100, 1600' }}
+  {%- endif -%}
+  <div class="hs-hero__scrim"></div>
+  <div class="hs-hero__block"></div>
+  <div class="hs-hero__inner">
+    <div class="hs-content">
+      {%- if section.settings.badge != blank -%}
+        <span class="hs-badge">{{ section.settings.badge | escape }}</span>
+      {%- endif -%}
+      <h1 class="hs-heading">{{ section.settings.heading | escape }}</h1>
+      {%- if section.settings.subheading != blank -%}
+        <p class="hs-sub">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        <a href="{{ section.settings.button_link }}" class="hs-cta">{{ section.settings.button_label | escape }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+  <div class="hs-badge-circle"><span>Custom<br>Neon</span></div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero (Stylisch)",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Hintergrundbild" },
+    { "type": "text", "id": "badge", "label": "Badge-Text", "default": "Neu: 8 Neonfarben" },
+    { "type": "text", "id": "heading", "label": "Titel", "default": "Dein Look. Dein Leuchten." },
+    { "type": "textarea", "id": "subheading", "label": "Untertitel", "default": "Konfiguriere dein eigenes Neon-Sign in drei Schritten – für dein Zimmer oder deinen Laden." },
+    { "type": "text", "id": "button_label", "label": "Button-Text", "default": "Jetzt gestalten" },
+    { "type": "url", "id": "button_link", "label": "Button-Link" }
+  ],
+  "presets": [{ "name": "Hero (Stylisch)" }]
+}
+{% endschema %}

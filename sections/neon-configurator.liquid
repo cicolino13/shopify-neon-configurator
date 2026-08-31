@@ -342,8 +342,8 @@
 
     // Richtpreis-Kalkulation auf Basis der LITASIGN-Herstellerkosten (siehe interne
     // Preiskalkulation): Lichtkosten skalieren linear mit der Breite, Rückwand nach
-    // Fläche, plus Versand, umgerechnet in CHF mit Marge. Nur eine grobe Schätzung -
-    // das verbindliche Angebot kommt per E-Mail.
+    // Fläche, plus Versand, umgerechnet in CHF mit Marge, plus CHF 25 Zollpauschale.
+    // Nur eine grobe Schätzung - das verbindliche Angebot kommt per E-Mail.
     var PRICE_LIGHT_USD_PER_CM = 23.1 / 30;
     var PRICE_RGB_SURCHARGE = 0.365;
     var PRICE_ACRYLIC_USD_PER_M2 = 22.7;
@@ -351,6 +351,7 @@
     var PRICE_HEIGHT_RATIO = 0.30;
     var PRICE_FX_CHF_PER_USD = 0.88;
     var PRICE_MARGIN = 2.5;
+    var PRICE_CUSTOMS_CHF = 25;
     var PRICE_SHIPPING_POINTS = [[30, 45.5], [50, 68.18], [80, 177.0]];
 
     function estimateShippingUsd(widthCm) {
@@ -376,7 +377,7 @@
       if (backingKey === 'transparent') { backingCost = area * PRICE_ACRYLIC_USD_PER_M2; }
       else if (backingKey === 'schwarz') { backingCost = area * PRICE_BLACKBOARD_USD_PER_M2; }
       var totalUsd = light + backingCost + estimateShippingUsd(widthCm);
-      return totalUsd * PRICE_FX_CHF_PER_USD * PRICE_MARGIN;
+      return totalUsd * PRICE_FX_CHF_PER_USD * PRICE_MARGIN + PRICE_CUSTOMS_CHF;
     }
 
     function updatePriceEstimate() {

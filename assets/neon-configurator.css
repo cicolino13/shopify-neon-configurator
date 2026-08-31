@@ -243,6 +243,12 @@
 }
 .nlc-error-box ul{margin:0;padding-left:1.1rem;}
 
+.nlc-price-estimate{
+  margin:0;padding:0.6rem 0.8rem;text-align:center;font-size:0.85rem;font-weight:600;
+  color:var(--nlc-accent);background:var(--nlc-bg);border:1px solid var(--nlc-line);
+  border-radius:10px;
+}
+
 .nlc-cta.button{
   margin-top:0.2rem;
   background:var(--nlc-accent);color:#0b0c10;

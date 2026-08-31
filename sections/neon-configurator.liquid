@@ -109,10 +109,10 @@
         <div class="nlc-field">
           <span class="nlc-label">Größe</span>
           <div class="nlc-sizes" role="radiogroup" aria-label="Größe wählen" id="nlcSizes-{{ section.id }}">
-            <button type="button" class="nlc-size" data-size="S · ca. 30 cm Breite" data-scale="0.7" role="radio" aria-checked="false">S<small>ca. 30 cm</small></button>
-            <button type="button" class="nlc-size is-active" data-size="M · ca. 50 cm Breite" data-scale="1" role="radio" aria-checked="true">M<small>ca. 50 cm</small></button>
-            <button type="button" class="nlc-size" data-size="L · ca. 80 cm Breite" data-scale="1.35" role="radio" aria-checked="false">L<small>ca. 80 cm</small></button>
-            <button type="button" class="nlc-size" data-size="XL · ca. 110 cm Breite" data-scale="1.7" role="radio" aria-checked="false">XL<small>ca. 110 cm</small></button>
+            <button type="button" class="nlc-size" data-size="S · ca. 30 cm Breite" data-scale="0.7" data-width="30" role="radio" aria-checked="false">S<small>ca. 30 cm</small></button>
+            <button type="button" class="nlc-size is-active" data-size="M · ca. 50 cm Breite" data-scale="1" data-width="50" role="radio" aria-checked="true">M<small>ca. 50 cm</small></button>
+            <button type="button" class="nlc-size" data-size="L · ca. 80 cm Breite" data-scale="1.35" data-width="80" role="radio" aria-checked="false">L<small>ca. 80 cm</small></button>
+            <button type="button" class="nlc-size" data-size="XL · ca. 110 cm Breite" data-scale="1.7" data-width="110" role="radio" aria-checked="false">XL<small>ca. 110 cm</small></button>
             <button type="button" class="nlc-size" data-custom-size="true" role="radio" aria-checked="false">Eigene<small>Masse</small></button>
           </div>
           <div class="nlc-custom-size" id="nlcCustomSize-{{ section.id }}" hidden>
@@ -124,10 +124,10 @@
         <div class="nlc-field">
           <span class="nlc-label">Rückwand</span>
           <div class="nlc-sizes" role="radiogroup" aria-label="Rückwand wählen" id="nlcBackings-{{ section.id }}">
-            <button type="button" class="nlc-size is-active" data-backing="Konturgeschnitten (transparent)" role="radio" aria-checked="true">Kontur<small>transparent, unsichtbar</small></button>
-            <button type="button" class="nlc-size" data-backing="Rechteckig (transparent)" role="radio" aria-checked="false">Rechteckig<small>transparent</small></button>
-            <button type="button" class="nlc-size" data-backing="Rechteckig (schwarz)" role="radio" aria-checked="false">Rechteckig<small>schwarz, matt</small></button>
-            <button type="button" class="nlc-size" data-backing="Ohne Rückwand" role="radio" aria-checked="false">Ohne<small>nur Buchstaben</small></button>
+            <button type="button" class="nlc-size is-active" data-backing="Konturgeschnitten (transparent)" data-backing-key="kontur" role="radio" aria-checked="true">Kontur<small>transparent, unsichtbar</small></button>
+            <button type="button" class="nlc-size" data-backing="Rechteckig (transparent)" data-backing-key="transparent" role="radio" aria-checked="false">Rechteckig<small>transparent</small></button>
+            <button type="button" class="nlc-size" data-backing="Rechteckig (schwarz)" data-backing-key="schwarz" role="radio" aria-checked="false">Rechteckig<small>schwarz, matt</small></button>
+            <button type="button" class="nlc-size" data-backing="Ohne Rückwand" data-backing-key="kontur" role="radio" aria-checked="false">Ohne<small>nur Buchstaben</small></button>
           </div>
         </div>
 
@@ -156,6 +156,8 @@
             <button type="button" class="nlc-chip" data-accessory="Ohne Fernbedienung" role="radio" aria-checked="false">Ohne</button>
           </div>
         </div>
+
+        <p class="nlc-price-estimate" id="nlcPriceEstimate-{{ section.id }}"></p>
 
         <button type="button" class="nlc-cta button" id="nlcNextBtn-{{ section.id }}">Weiter zur Kontaktanfrage</button>
       </div>
@@ -254,6 +256,7 @@
     var logoUrlField = section.querySelector('#nlcLogoUrl-{{ section.id }}');
     var logoPreviewImg = section.querySelector('#nlcLogoPreview-{{ section.id }}');
     var contactForm = section.querySelector('#{{ nlc_form_id }}');
+    var priceEstimateEl = section.querySelector('#nlcPriceEstimate-{{ section.id }}');
 
     var state = {
       text: textInput.value,
@@ -265,7 +268,9 @@
       isRgb: false,
       sizeLabel: 'M · ca. 50 cm Breite',
       scale: 1,
+      widthCm: 50,
       backing: 'Konturgeschnitten (transparent)',
+      backingKey: 'kontur',
       bgName: 'Hecke',
       bg: 'https://cdn.shopify.com/s/files/1/0943/7203/6947/files/hecke-hintergrund.jpg?width=1600',
       mount: 'Wandmontage mit Abstandshaltern',
@@ -333,6 +338,56 @@
     function hexToRgba(hex, alpha) {
       var c = hexToRgb(hex);
       return 'rgba(' + c.r + ',' + c.g + ',' + c.b + ',' + alpha + ')';
+    }
+
+    // Richtpreis-Kalkulation auf Basis der LITASIGN-Herstellerkosten (siehe interne
+    // Preiskalkulation): Lichtkosten skalieren linear mit der Breite, Rückwand nach
+    // Fläche, plus Versand, umgerechnet in CHF mit Marge. Nur eine grobe Schätzung -
+    // das verbindliche Angebot kommt per E-Mail.
+    var PRICE_LIGHT_USD_PER_CM = 23.1 / 30;
+    var PRICE_RGB_SURCHARGE = 0.365;
+    var PRICE_ACRYLIC_USD_PER_M2 = 22.7;
+    var PRICE_BLACKBOARD_USD_PER_M2 = 7.6;
+    var PRICE_HEIGHT_RATIO = 0.30;
+    var PRICE_FX_CHF_PER_USD = 0.88;
+    var PRICE_MARGIN = 2.8;
+    var PRICE_SHIPPING_POINTS = [[30, 45.5], [50, 68.18], [80, 177.0]];
+
+    function estimateShippingUsd(widthCm) {
+      var pts = PRICE_SHIPPING_POINTS;
+      if (widthCm <= pts[0][0]) { return pts[0][1]; }
+      for (var i = 0; i < pts.length - 1; i++) {
+        if (widthCm >= pts[i][0] && widthCm <= pts[i + 1][0]) {
+          return pts[i][1] + (pts[i + 1][1] - pts[i][1]) * (widthCm - pts[i][0]) / (pts[i + 1][0] - pts[i][0]);
+        }
+      }
+      var x0 = pts[1][0], y0 = pts[1][1], x1 = pts[2][0], y1 = pts[2][1];
+      var slope = (y1 - y0) / (x1 - x0);
+      return y1 + slope * (widthCm - x1);
+    }
+
+    function estimatePriceChf(widthCm, backingKey, isRgb) {
+      var light = widthCm * PRICE_LIGHT_USD_PER_CM;
+      if (isRgb) { light *= (1 + PRICE_RGB_SURCHARGE); }
+      var widthM = widthCm / 100;
+      var heightM = widthM * PRICE_HEIGHT_RATIO;
+      var area = widthM * heightM;
+      var backingCost = 0;
+      if (backingKey === 'transparent') { backingCost = area * PRICE_ACRYLIC_USD_PER_M2; }
+      else if (backingKey === 'schwarz') { backingCost = area * PRICE_BLACKBOARD_USD_PER_M2; }
+      var totalUsd = light + backingCost + estimateShippingUsd(widthCm);
+      return totalUsd * PRICE_FX_CHF_PER_USD * PRICE_MARGIN;
+    }
+
+    function updatePriceEstimate() {
+      if (!priceEstimateEl) { return; }
+      if (!state.widthCm || state.widthCm <= 0) {
+        priceEstimateEl.textContent = 'Preis nach individueller Anfrage.';
+        return;
+      }
+      var price = estimatePriceChf(state.widthCm, state.backingKey, state.isRgb);
+      var rounded = Math.round(price / 5) * 5;
+      priceEstimateEl.textContent = 'ca. CHF ' + rounded.toLocaleString('de-CH') + '.– (Richtpreis, verbindliches Angebot per E-Mail)';
     }
 
     var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -403,6 +458,9 @@
         colorNameEl.textContent = state.colorName;
       }
 
+      updatePriceEstimate();
+      var priceLine = priceEstimateEl ? priceEstimateEl.textContent : '';
+
       if (configSummary) {
         configSummary.value =
           'Text: ' + text +
@@ -414,7 +472,8 @@
           ' | Einsatzort: ' + state.env +
           ' | Zubehör: ' + state.accessory +
           (state.logoUrl ? ' | Logo: ' + state.logoUrl : '') +
-          ' | Vorschau-Hintergrund: ' + state.bgName;
+          ' | Vorschau-Hintergrund: ' + state.bgName +
+          (priceLine ? ' | Richtpreis (Web-Kalkulation): ' + priceLine : '');
       }
 
       if (logoUrlField) {
@@ -422,7 +481,7 @@
       }
 
       if (recap) {
-        recap.textContent = '"' + text + '" · ' + state.fontName + ' · ' + state.colorName + ' · ' + state.sizeLabel.split(' ·')[0] + ' · ' + state.backing + ' · ' + state.mount + ' · ' + state.env + ' · ' + state.accessory + (state.logoUrl ? ' · Logo angehängt' : '');
+        recap.textContent = '"' + text + '" · ' + state.fontName + ' · ' + state.colorName + ' · ' + state.sizeLabel.split(' ·')[0] + ' · ' + state.backing + ' · ' + state.mount + ' · ' + state.env + ' · ' + state.accessory + (state.logoUrl ? ' · Logo angehängt' : '') + (priceLine ? ' · ' + priceLine : '');
       }
     }
 
@@ -621,8 +680,10 @@
         width = Math.min(300, Math.max(10, Math.round(width)));
         state.sizeLabel = 'Eigene Masse · ' + width + ' cm Breite';
         state.scale = Math.min(3, Math.max(0.5, width / 50));
+        state.widthCm = width;
       } else {
         state.sizeLabel = 'Eigene Masse (Breite folgt im Gespräch)';
+        state.widthCm = 0;
       }
     }
 
@@ -638,6 +699,7 @@
           if (customSizeWrap) { customSizeWrap.hidden = true; }
           state.sizeLabel = btn.dataset.size;
           state.scale = parseFloat(btn.dataset.scale);
+          state.widthCm = parseFloat(btn.dataset.width);
           render();
         }
       });
@@ -657,6 +719,7 @@
       btn.addEventListener('click', function () {
         selectFromGroup(backings, btn);
         state.backing = btn.dataset.backing;
+        state.backingKey = btn.dataset.backingKey;
         render();
       });
     });

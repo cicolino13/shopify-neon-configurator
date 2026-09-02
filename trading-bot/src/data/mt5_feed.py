@@ -40,15 +40,44 @@ class Mt5Feed:
             raise ValueError(f"unsupported timeframe: {timeframe}")
         self.timeframe = getattr(mt5, _TIMEFRAME_MAP[timeframe])
 
-        login = os.environ.get("MT5_LOGIN")
-        password = os.environ.get("MT5_PASSWORD")
-        server = os.environ.get("MT5_SERVER")
-
-        if not mt5.initialize(login=int(login) if login else None, password=password, server=server):
-            raise RuntimeError(f"MT5 initialize() failed: {mt5.last_error()}")
+        if not mt5.initialize(**self._credentials()):
+            raise RuntimeError(
+                f"MT5 initialize() failed: {mt5.last_error()}. "
+                "Check that the MetaTrader 5 terminal is running and logged in, "
+                "and that MT5_LOGIN / MT5_PASSWORD / MT5_SERVER match that account "
+                "if you set them."
+            )
 
         if not mt5.symbol_select(symbol, True):
-            raise RuntimeError(f"could not select symbol {symbol!r} in MT5 Market Watch")
+            raise RuntimeError(
+                f"could not select symbol {symbol!r} in MT5 Market Watch: "
+                f"{mt5.last_error()}. Brokers name gold differently (XAUUSD, "
+                "GOLD, XAUUSD.r, ...) -- use the exact name your terminal shows."
+            )
+
+    @staticmethod
+    def _credentials() -> dict:
+        """Credentials from the environment, omitting anything unset.
+
+        Passing login/password/server as None would be rejected; leaving them
+        out entirely makes MT5 attach to whatever account the running terminal
+        is already logged into, which is the common case.
+        """
+        credentials: dict = {}
+
+        login = os.environ.get("MT5_LOGIN", "").strip()
+        if login:
+            try:
+                credentials["login"] = int(login)
+            except ValueError as exc:
+                raise RuntimeError(f"MT5_LOGIN must be the numeric account number, got {login!r}") from exc
+
+        for name, key in (("MT5_PASSWORD", "password"), ("MT5_SERVER", "server")):
+            value = os.environ.get(name, "").strip()
+            if value:
+                credentials[key] = value
+
+        return credentials
 
     def get_candles(self, count: int) -> pd.DataFrame:
         rates = self._mt5.copy_rates_from_pos(self.symbol, self.timeframe, 0, count)
